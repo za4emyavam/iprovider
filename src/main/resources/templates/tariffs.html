@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fastest</title>
+    <link rel="stylesheet" th:href="@{/styles.css}"/>
+</head>
+<body>
+    <h1 class="page-name">List of tariffs</h1>
+    <!--<div th:each="tariff : ${tariffs}">
+        <span th:text="${tariff.name}">TARIFFS</span><br/>
+    </div>-->
+    <table class="tariffs-table">
+        <tr>
+            <th class="tariff-table-th">Id</th>
+            <th class="tariff-table-th">Name</th>
+            <th class="tariff-table-th">Description</th>
+            <th class="tariff-table-th">Cost</th>
+            <th class="tariff-table-th">Frequency of payment</th>
+            <th class="tariff-table-th">Status</th>
+        </tr>
+        <tr th:each="tariff : ${tariffs}">
+            <td class="tariff-table-td" th:text="${tariff.tariffId}"/>
+            <td class="tariff-table-td" th:text="${tariff.name}"/>
+            <td class="tariff-table-td" th:text="${tariff.description}"/>
+            <td class="tariff-table-td" th:text="${tariff.cost}"/>
+            <td class="tariff-table-td" th:text="${tariff.frequencyOfPayment}"/>
+            <td class="tariff-table-td" th:text="${tariff.status}"/>
+        </tr>
+    </table>
+</body>
+</html>

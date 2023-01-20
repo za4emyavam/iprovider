@@ -1,0 +1,12 @@
+.page-name {
+    color: darkred;
+}
+
+.tariff-table, .tariff-table-td, .tariff-table-th {
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+
+.tariff-table-td, .tariff-table-th {
+    background-color: #96D4D4;
+}
