@@ -71,36 +71,36 @@ CREATE OR REPLACE FUNCTION f_t_transaction()
     RETURNS trigger AS
 $BODY$
 DECLARE
-temp_user_balance DECIMAL;
+    temp_user_balance DECIMAL;
 BEGIN
-SELECT INTO temp_user_balance user_balance FROM "user" WHERE NEW.balance_id = user_id;
-IF (NEW.type = 'refill') THEN
-UPDATE "user" u
-SET user_balance=add(temp_user_balance, NEW.transaction_amount)
-WHERE NEW.balance_id = user_id;
-UPDATE transaction t SET transaction_status='successful' WHERE t.transaction_id = New.transaction_id;
-ELSE
+    SELECT INTO temp_user_balance user_balance FROM "user" WHERE NEW.balance_id = user_id;
+    IF (NEW.type = 'refill') THEN
+        UPDATE "user" u
+        SET user_balance=add(temp_user_balance, NEW.transaction_amount)
+        WHERE NEW.balance_id = user_id;
+        UPDATE transaction t SET transaction_status='successful' WHERE t.transaction_id = New.transaction_id;
+    ELSE
         IF (temp_user_balance >= NEW.transaction_amount) THEN
-UPDATE "user" u
-SET user_balance=subtract(user_balance, NEW.transaction_amount)
-WHERE NEW.balance_id = user_id;
-UPDATE transaction t SET transaction_status='successful' WHERE t.transaction_id = New.transaction_id;
-UPDATE "user" u SET user_status='subscribed' WHERE u.user_id = NEW.balance_id;
-ELSE
-UPDATE "user" u SET user_status='blocked' WHERE u.user_id = NEW.balance_id;
-UPDATE transaction t SET transaction_status='denied' WHERE t.transaction_id = New.transaction_id;
-END IF;
-END IF;
-RETURN NEW;
+            UPDATE "user" u
+            SET user_balance=subtract(user_balance, NEW.transaction_amount)
+            WHERE NEW.balance_id = user_id;
+            UPDATE transaction t SET transaction_status='successful' WHERE t.transaction_id = New.transaction_id;
+            UPDATE "user" u SET user_status='subscribed' WHERE u.user_id = NEW.balance_id;
+        ELSE
+            UPDATE "user" u SET user_status='blocked' WHERE u.user_id = NEW.balance_id;
+            UPDATE transaction t SET transaction_status='denied' WHERE t.transaction_id = New.transaction_id;
+        END IF;
+    END IF;
+    RETURN NEW;
 END;
 $BODY$
-LANGUAGE plpgsql VOLATILE;
+    LANGUAGE plpgsql VOLATILE;
 
 CREATE TRIGGER t_transaction
     AFTER INSERT
     ON transaction
     FOR EACH ROW
-    EXECUTE PROCEDURE f_t_transaction();
+EXECUTE PROCEDURE f_t_transaction();
 
 CREATE TABLE service
 (
@@ -155,33 +155,33 @@ CREATE OR REPLACE FUNCTION f_t_update_request_status() RETURNS trigger
 
 $$
 DECLARE
-temp_tariff_cost DECIMAL;
+    temp_tariff_cost DECIMAL;
     temp_user_status user_status_type;
 BEGIN
 
 
     IF (NEW.status = 'approved') then
-SELECT INTO temp_tariff_cost cost FROM tariff t WHERE t.tariff_id = NEW.tariff;
-INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
-VALUES (NEW.subscriber, 'debit', temp_tariff_cost, CURRENT_DATE, NULL);
-SELECT INTO temp_user_status user_status FROM "user" u WHERE NEW.subscriber = u.user_id;
-IF (temp_user_status = 'blocked') THEN
+        SELECT INTO temp_tariff_cost cost FROM tariff t WHERE t.tariff_id = NEW.tariff;
+        INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
+        VALUES (NEW.subscriber, 'debit', temp_tariff_cost, CURRENT_DATE, NULL);
+        SELECT INTO temp_user_status user_status FROM "user" u WHERE NEW.subscriber = u.user_id;
+        IF (temp_user_status = 'blocked') THEN
             INSERT INTO user_tariffs(user_id, tariff_id, date_of_start, date_of_last_payment)
             VALUES (NEW.subscriber, NEW.tariff, CURRENT_DATE, NULL);
-ELSE
+        ELSE
             INSERT INTO user_tariffs(user_id, tariff_id, date_of_start, date_of_last_payment)
             VALUES (NEW.subscriber, NEW.tariff, CURRENT_DATE, CURRENT_DATE);
-END IF;
-end if;
-RETURN NEW;
+        END IF;
+    end if;
+    RETURN NEW;
 END;
 $$;
 
 CREATE OR REPLACE TRIGGER t_con_request_change_status
     AFTER UPDATE
-                     ON connection_request
-                     FOR EACH ROW
-                     EXECUTE FUNCTION f_t_update_request_status();
+    ON connection_request
+    FOR EACH ROW
+EXECUTE FUNCTION f_t_update_request_status();
 
 CREATE TABLE request_additional_services
 (
@@ -198,14 +198,14 @@ CREATE OR REPLACE FUNCTION datediff(type VARCHAR, date_from DATE, date_to DATE) 
 AS
 $$
 DECLARE
-age INTERVAL;
+    age INTERVAL;
 BEGIN
-CASE type
+    CASE type
         WHEN 'year' THEN RETURN date_part('year', date_to) - date_part('year', date_from);
-WHEN 'month' THEN age := age(date_to, date_from);
-RETURN date_part('year', age) * 12 + date_part('month', age);
-ELSE RETURN (date_to - date_from)::int;
-END CASE;
+        WHEN 'month' THEN age := age(date_to, date_from);
+                          RETURN date_part('year', age) * 12 + date_part('month', age);
+        ELSE RETURN (date_to - date_from)::int;
+        END CASE;
 END;
 $$;
 
@@ -213,7 +213,7 @@ CREATE OR REPLACE FUNCTION f_check_payment_by_user_id(integer) RETURNS INTEGER
     LANGUAGE plpgsql AS
 $$
 DECLARE
-temp_tariffs              integer[];
+    temp_tariffs              integer[];
     temp_date_of_last_payment date;
     temp_frequency_of_payment integer;
     temp_tariff_cost          DECIMAL;
@@ -225,34 +225,34 @@ BEGIN
         );
     IF (array_length(temp_tariffs, 1) < 1) THEN
         RETURN 1;
-end if;
-FOR var in array_lower(temp_tariffs, 1)..array_upper(temp_tariffs, 1)
+    end if;
+    FOR var in array_lower(temp_tariffs, 1)..array_upper(temp_tariffs, 1)
         loop
-SELECT INTO temp_frequency_of_payment frequency_of_payment
-FROM tariff t
-WHERE tariff_id = temp_tariffs[var];
-SELECT INTO temp_date_of_last_payment date_of_last_payment
-FROM user_tariffs ut
-WHERE user_id = $1
-  AND tariff_id = temp_tariffs[var];
-IF (temp_date_of_last_payment IS NULL OR
+            SELECT INTO temp_frequency_of_payment frequency_of_payment
+            FROM tariff t
+            WHERE tariff_id = temp_tariffs[var];
+            SELECT INTO temp_date_of_last_payment date_of_last_payment
+            FROM user_tariffs ut
+            WHERE user_id = $1
+              AND tariff_id = temp_tariffs[var];
+            IF (temp_date_of_last_payment IS NULL OR
                 datediff('day', temp_date_of_last_payment, NOW()::DATE) > temp_frequency_of_payment) THEN
-SELECT INTO temp_tariff_cost cost
-FROM tariff t
-WHERE tariff_id = temp_tariffs[var];
-INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
-VALUES ($1, 'debit', temp_tariff_cost, CURRENT_DATE, NULL)
-    RETURNING transaction_id INTO temp_id;
-SELECT INTO temp_status transaction_status FROM transaction t WHERE transaction_id = temp_id;
-IF (temp_status = 'successful') THEN
-UPDATE user_tariffs ut
-SET date_of_last_payment=CURRENT_DATE
-WHERE user_id = $1
-  AND tariff_id = temp_tariffs[var];
-end if;
-end if;
-end loop;
-RETURN -1;
+                SELECT INTO temp_tariff_cost cost
+                FROM tariff t
+                WHERE tariff_id = temp_tariffs[var];
+                INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
+                VALUES ($1, 'debit', temp_tariff_cost, CURRENT_DATE, NULL)
+                RETURNING transaction_id INTO temp_id;
+                SELECT INTO temp_status transaction_status FROM transaction t WHERE transaction_id = temp_id;
+                IF (temp_status = 'successful') THEN
+                    UPDATE user_tariffs ut
+                    SET date_of_last_payment=CURRENT_DATE
+                    WHERE user_id = $1
+                      AND tariff_id = temp_tariffs[var];
+                end if;
+            end if;
+        end loop;
+    RETURN -1;
 END;
 $$;
 
@@ -260,15 +260,15 @@ CREATE OR REPLACE FUNCTION f_check_payment() RETURNS VOID
     LANGUAGE plpgsql AS
 $$
 DECLARE
-temp_users_id integer[];
+    temp_users_id integer[];
 BEGIN
     temp_users_id := ARRAY(
             SELECT DISTINCT user_id FROM user_tariffs
         );
-FOR var in array_lower(temp_users_id, 1)..array_upper(temp_users_id, 1)
+    FOR var in array_lower(temp_users_id, 1)..array_upper(temp_users_id, 1)
         loop
             PERFORM f_check_payment_by_user_id(temp_users_id[var]);
-end loop;
+        end loop;
     RETURN;
 END;
 $$;
@@ -292,11 +292,20 @@ VALUES ('IP-TV'),
 INSERT INTO tariff (name, description, cost, frequency_of_payment)
 VALUES ('IP-TV1', 'best ip-tv', 120, 28),
        ('Super Internet', 'best internet', 180, 28),
-       ('IP-TV + Super Internet', 'best ip-tv and best internet', 250, 28);
+       ('IP-TV + Super Internet', 'best ip-tv and best internet', 250, 28),
+       ('Basic Telephone', 'basic telephone', 50, 28),
+       ('Super Telephone', 'super telephone', 80, 28),
+       ('Cabel TV + Telephone', 'cabel tv + telephone', 100, 28);
 
 INSERT INTO tariff_services(tariff_id, services_id)
-VALUES (3, 1),
-       (3, 2);
+VALUES (1, 1),
+       (2, 2),
+       (3, 1),
+       (3, 2),
+       (4, 3),
+       (5, 3),
+       (6, 3),
+       (6, 4);
 
 
 INSERT INTO "user" (email, pass, registration_date, user_role, user_balance, firstname,
@@ -304,9 +313,11 @@ INSERT INTO "user" (email, pass, registration_date, user_role, user_balance, fir
 VALUES ('example1@gmail.com', 12345, CURRENT_DATE, DEFAULT, 680, 'Vasya', /*'Ivanovich',*/ 'Pupkin', '+380634325657'),
        ('manager@gmail.com', 12345, CURRENT_DATE, 'admin', DEFAULT, 'Kiriil', /*'Bubenovich',*/ 'Karapuzin',
         '+380634325657'),
-       ('admin@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, 'main_admin', DEFAULT, 'Ivan', /*'Kulebovich',*/ 'Antonov',
+       ('admin@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, 'main_admin',
+        DEFAULT, 'Ivan', /*'Kulebovich',*/ 'Antonov',
         '+380764325621'),
-       ('example2@gmail.com', 12345, CURRENT_DATE, DEFAULT, 500, 'Danya', /*'Ivanovich',*/ 'Karapuzov', '+380634325657'),
+       ('example2@gmail.com', 12345, CURRENT_DATE, DEFAULT, 500, 'Danya', /*'Ivanovich',*/ 'Karapuzov',
+        '+380634325657'),
        ('example3@gmail.com', 12345, CURRENT_DATE, DEFAULT, DEFAULT, 'Kiriil', /*'Bubenovich',*/ 'Karapuzin',
         '+380634325657'),
        ('example4@gmail.com', 12345, CURRENT_DATE, DEFAULT, DEFAULT, 'Ivan', /*'Kulebovich',*/ 'Antonov',
