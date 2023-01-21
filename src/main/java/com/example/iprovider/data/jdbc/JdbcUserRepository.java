@@ -2,12 +2,17 @@ package com.example.iprovider.data.jdbc;
 
 import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.model.User;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class JdbcUserRepository implements UserRepository {
@@ -15,6 +20,44 @@ public class JdbcUserRepository implements UserRepository {
 
     public JdbcUserRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    @Transactional
+    public User create(User user) {
+        PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(
+                "insert into \"user\" " +
+                        "(email, pass, registration_date, user_role, user_status," +
+                        " user_balance, firstname, surname, telephone_number) " +
+                        "values (?, ?, ?, ?::role_type, ?::user_status_type, ?, ?, ?, ?) " +
+                        "RETURNING user_id",
+                Types.VARCHAR, Types.VARCHAR, Types.DATE, Types.VARCHAR, Types.VARCHAR,
+                Types.NUMERIC, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR
+        );
+        pscf.setReturnGeneratedKeys(true);
+
+        PreparedStatementCreator psc =
+                pscf.newPreparedStatementCreator(
+                        Arrays.asList(
+                                user.getEmail(),
+                                user.getPassword(),
+                                user.getRegistrationDate(),
+                                user.getUserRole().name().toLowerCase(),
+                                user.getUserStatus().name().toLowerCase(),
+                                user.getUserBalance(),
+                                user.getFirstname(),
+                                user.getSurname(),
+                                user.getTelephoneNumber()
+                        ));
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(psc, keyHolder);
+        //TODO:
+        long userId = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        /*long userId = (long) keyHolder.getKeys().get("user_id");*/
+        user.setUserId(userId);
+
+
+        return user;
     }
 
     @Override
