@@ -310,17 +310,17 @@ VALUES (1, 1),
 
 INSERT INTO "user" (email, pass, registration_date, user_role, user_balance, firstname,
     /*middle_name,*/ surname, telephone_number)
-VALUES ('example1@gmail.com', 12345, CURRENT_DATE, DEFAULT, 680, 'Vasya', /*'Ivanovich',*/ 'Pupkin', '+380634325657'),
-       ('manager@gmail.com', 12345, CURRENT_DATE, 'admin', DEFAULT, 'Kiriil', /*'Bubenovich',*/ 'Karapuzin',
+VALUES ('example1@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, DEFAULT, 680, 'Vasya', /*'Ivanovich',*/ 'Pupkin', '+380634325657'),
+       ('manager@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, 'admin', DEFAULT, 'Kiriil', /*'Bubenovich',*/ 'Karapuzin',
         '+380634325657'),
        ('admin@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, 'main_admin',
         DEFAULT, 'Ivan', /*'Kulebovich',*/ 'Antonov',
         '+380764325621'),
-       ('example2@gmail.com', 12345, CURRENT_DATE, DEFAULT, 500, 'Danya', /*'Ivanovich',*/ 'Karapuzov',
+       ('example2@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, DEFAULT, 500, 'Danya', /*'Ivanovich',*/ 'Karapuzov',
         '+380634325657'),
-       ('example3@gmail.com', 12345, CURRENT_DATE, DEFAULT, DEFAULT, 'Kiriil', /*'Bubenovich',*/ 'Karapuzin',
+       ('example3@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, DEFAULT, DEFAULT, 'Kiriil', /*'Bubenovich',*/ 'Karapuzin',
         '+380634325657'),
-       ('example4@gmail.com', 12345, CURRENT_DATE, DEFAULT, DEFAULT, 'Ivan', /*'Kulebovich',*/ 'Antonov',
+       ('example4@gmail.com', '$2a$10$8Z/FaHQXO2Wysrl56d1G4.t0is4eJ1uMTmDbT4XNFGgv2KZxGghA2', CURRENT_DATE, DEFAULT, DEFAULT, 'Ivan', /*'Kulebovich',*/ 'Antonov',
         '+380764325621');
 
 INSERT INTO additional_service (name, description, cost)

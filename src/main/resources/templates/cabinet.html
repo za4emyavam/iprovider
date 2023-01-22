@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cabinet</title>
+    <link rel="stylesheet" th:href="@{/css/cabinet.css}" />
+</head>
+<body>
+<div class="cabinet-header">
+    <h1>Welcome to your Cabinet</h1>
+</div>
+<div class="cabinet-container">
+    <div class="cabinet-sidebar">
+        <ul>
+            <li><a th:href="@{/cabinet/profile}">Profile</a></li>
+            <li><a th:href="@{/cabinet/billing}">Billing</a></li>
+            <li><a th:href="@{/cabinet/services}">Services</a></li>
+        </ul>
+    </div>
+    <div class="cabinet-content" th:fragment="cabinetContent">
+        <h1>Welcome to your Cabinet,
+            <span th:text="${#authentication.principal.firstname}"></span>
+        </h1>
+        <p>Email: <span th:text="${#authentication.name}"/></p>
+        <p>Status: <span th:text="${#authentication.principal.userStatus}"/></p>
+        <p>Registration date: <span th:text="${#dates.format(#authentication.principal.registrationDate, 'dd-MM-yyyy')}"/></p>
+        <p>Telephone number: <span th:text="${#authentication.principal.telephoneNumber}"/></p>
+        <p>Balance: <span th:text="${#authentication.principal.userBalance}"/> ₴</p>
+        <p>Connected Tariffs:</p>
+        <table class="tariffs-table">
+            <tr>
+                <!--<th class="tariff-table-th">Id</th>-->
+                <th class="tariff-table-th">Name</th>
+                <th class="tariff-table-th">Description</th>
+                <th class="tariff-table-th">Cost</th>
+                <th class="tariff-table-th">Frequency of payment</th>
+                <!--<th class="tariff-table-th">Status</th>-->
+                <th class="tariff-table-th">Service</th>
+                <th class="tariff-table-th">Date Of Start</th>
+                <th class="tariff-table-th">Date Of last payment</th>
+            </tr>
+            <tr th:each="tariff : ${tariffs}">
+                <!--<td class="tariff-table-td" th:text="${tariff.tariffId}"/>-->
+                <td class="tariff-table-td" th:text="${tariff.tariff_id.name}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariff_id.description}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariff_id.cost}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariff_id.frequencyOfPayment}"/>
+                <!--<td class="tariff-table-td" th:text="${tariff.status}"/>-->
+                <td class="tariff-table-td">
+                    <div th:each="service : ${tariff.tariff_id.getServices()}">
+                        <p th:text="${service.serviceType}"></p>
+                    </div>
+                </td>
+                <td class="tariff-table-td" th:text="${#dates.format(tariff.dateOfStart, 'dd-MM-yyyy')}"/>
+                <td class="tariff-table-td" th:text="${tariff.dateOfLastPayment}"/>
+
+            </tr>
+        </table>
+    </div>
+</div>
+<script th:src="@{/js/cabinet.js}"></script>
+</body>
+</html>

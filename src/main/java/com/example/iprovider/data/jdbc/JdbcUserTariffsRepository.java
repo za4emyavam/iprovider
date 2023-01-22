@@ -1,8 +1,9 @@
 package com.example.iprovider.data.jdbc;
 
-import com.example.iprovider.data.TariffRepository;
+import com.example.iprovider.data.UserTariffsRepository;
 import com.example.iprovider.model.Service;
 import com.example.iprovider.model.Tariff;
+import com.example.iprovider.model.UserTariffs;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -11,42 +12,38 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class JdbcTariffRepository implements TariffRepository {
+public class JdbcUserTariffsRepository implements UserTariffsRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTariffRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcUserTariffsRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public Iterable<Tariff> readAll() {
-        return jdbcTemplate.query("select * from tariff", this::mapToRowTariff);
-    }
-
-    @Override
-    public Iterable<Tariff> readAll(int page, int size) {
-        int offset = (page - 1) * size;
-        return jdbcTemplate.query("select * from tariff limit ? offset ?",
-                this::mapToRowTariff,
-                size,
-                offset
+    public Iterable<UserTariffs> readById(Long userId) {
+        return jdbcTemplate.query("select * from user_tariffs ut " +
+                        "where ut.user_id=?", this::mapRowToUserTariffs,
+                userId
         );
     }
 
-    @Override
-    public Integer getAmount() {
-        return jdbcTemplate.query("select count(tariff_id) from tariff",
-                (rs, rowNum) -> rs.getInt(1))
-                .get(0);
+    private UserTariffs mapRowToUserTariffs(ResultSet rs, int rowNum) throws SQLException {
+        return new UserTariffs(
+                rs.getLong("user_tariffs_id"),
+                rs.getLong("user_id"),
+                tariffById(rs.getLong("tariff_id")),
+                rs.getDate("date_of_start"),
+                rs.getDate("date_of_last_payment")
+        );
     }
 
-    @Override
-    public Iterable<Tariff> readById(Long userId) {
-        return jdbcTemplate.query("select t.* from user_tariffs ut, tariff t " +
-                "where ut.user_id=? and ut.tariff_id=t.tariff_id",
+    private Tariff tariffById(Long tariffId) {
+        List<Tariff> tariffs = jdbcTemplate.query("select * from tariff t " +
+                        "where t.tariff_id=?",
                 this::mapToRowTariff,
-                userId);
+                tariffId);
+        return tariffs.isEmpty() ? null : tariffs.get(0);
     }
 
     private Tariff mapToRowTariff(ResultSet row, int rowNum) throws SQLException {

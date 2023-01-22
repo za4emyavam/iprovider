@@ -6,4 +6,5 @@ public interface TariffRepository {
     Iterable<Tariff> readAll();
     Iterable<Tariff> readAll(int page, int size);
     Integer getAmount();
+    Iterable<Tariff> readById(Long userId);
 }

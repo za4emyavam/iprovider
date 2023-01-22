@@ -7,7 +7,9 @@
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
-<div sec:authorize="hasRole('USER')">Text visible to user.</div>
+<div sec:authorize="hasRole('USER')">
+    <a th:href="@{/cabinet}" th:text="Cabinet"/>
+</div>
 <div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
 <div sec:authorize="hasRole('MAIN_ADMIN')">Text visible to main_admin.</div>
 
