@@ -1,6 +1,6 @@
 package com.example.iprovider.data;
 
-import com.example.iprovider.model.UserTariffs;
+import com.example.iprovider.entities.UserTariffs;
 
 public interface UserTariffsRepository {
     Iterable<UserTariffs> readById(Long userId);

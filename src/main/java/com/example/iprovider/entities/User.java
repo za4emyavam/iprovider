@@ -1,4 +1,4 @@
-package com.example.iprovider.model;
+package com.example.iprovider.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

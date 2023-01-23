@@ -1,6 +1,6 @@
 package com.example.iprovider.security;
 
-import com.example.iprovider.model.User;
+import com.example.iprovider.entities.User;
 import lombok.Data;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

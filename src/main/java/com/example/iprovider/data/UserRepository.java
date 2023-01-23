@@ -1,6 +1,6 @@
 package com.example.iprovider.data;
 
-import com.example.iprovider.model.User;
+import com.example.iprovider.entities.User;
 
 public interface UserRepository {
 

@@ -1,9 +1,9 @@
 package com.example.iprovider.data.jdbc;
 
 import com.example.iprovider.data.UserTariffsRepository;
-import com.example.iprovider.model.Service;
-import com.example.iprovider.model.Tariff;
-import com.example.iprovider.model.UserTariffs;
+import com.example.iprovider.entities.Service;
+import com.example.iprovider.entities.Tariff;
+import com.example.iprovider.entities.UserTariffs;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

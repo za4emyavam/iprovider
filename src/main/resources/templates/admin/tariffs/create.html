@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<div class="admin-header">
+    <h1>Welcome to your admin page</h1>
+</div>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+    <div class="admin-content" th:fragment="adminContent">
+        <form action="#" th:object="${tariff}" th:action="@{/admin/tariffs/create}" method="post">
+            <!--id="creatingTariffForm"-->
+            <label for="name">Name:</label>
+            <input type="text" th:field="*{name}" name="name" id="name"/><br/>
+
+            <label for="description">Description:</label>
+            <input type="text" th:field="*{description}" name="description" id="description"/><br/>
+
+            <label for="cost">Cost:</label>
+            <input type="number" th:field="*{cost}" name="cost" id="cost"/><br/>
+
+            <label for="frequencyOfPayment">Frequency of payment: </label>
+            <input type="number" th:field="*{frequencyOfPayment}" name="frequencyOfPayment" id="frequencyOfPayment"/><br/>
+
+            <label for="status">Status:</label>
+            <input type="text" th:field="*{status}" name="status" id="status"/><br/>
+
+            <div class="checkboxes-services" th:each="service : ${services}">
+                <input th:field="*{services}" type="checkbox" th:value="${service.serviceId}">
+                <span th:text="${service.serviceType.toLowerCase()}">SERVICE</span><br/>
+            </div>
+
+            <input type="submit" value="Add tariff"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.example.iprovider.security;
 
 import com.example.iprovider.data.UserRepository;
-import com.example.iprovider.model.User;
+import com.example.iprovider.entities.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,6 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests()
                 .requestMatchers("/cabinet", "/cabinet/**").hasRole("USER")
+                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

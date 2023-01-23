@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/register")
 public class RegistrationController {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public RegistrationController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;

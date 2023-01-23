@@ -1,7 +1,7 @@
 package com.example.iprovider.data.jdbc;
 
 import com.example.iprovider.data.UserRepository;
-import com.example.iprovider.model.User;
+import com.example.iprovider.entities.User;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-
 @Repository
 public class JdbcUserRepository implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
@@ -29,8 +27,7 @@ public class JdbcUserRepository implements UserRepository {
                 "insert into \"user\" " +
                         "(email, pass, registration_date, user_role, user_status," +
                         " user_balance, firstname, surname, telephone_number) " +
-                        "values (?, ?, ?, ?::role_type, ?::user_status_type, ?, ?, ?, ?) " +
-                        "RETURNING user_id",
+                        "values (?, ?, ?, ?::role_type, ?::user_status_type, ?, ?, ?, ?) ",
                 Types.VARCHAR, Types.VARCHAR, Types.DATE, Types.VARCHAR, Types.VARCHAR,
                 Types.NUMERIC, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR
         );
@@ -51,9 +48,8 @@ public class JdbcUserRepository implements UserRepository {
                         ));
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
-        //TODO:
-        long userId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        /*long userId = (long) keyHolder.getKeys().get("user_id");*/
+        long userId = Long.parseLong(keyHolder.getKeys().get("user_id").toString());
+
         user.setUserId(userId);
 
 

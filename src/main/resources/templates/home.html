@@ -10,7 +10,7 @@
 <div sec:authorize="hasRole('USER')">
     <a th:href="@{/cabinet}" th:text="Cabinet"/>
 </div>
-<div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
+<div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" th:text="Admin"/></div>
 <div sec:authorize="hasRole('MAIN_ADMIN')">Text visible to main_admin.</div>
 
 <h1 class="page-name">Main page</h1>

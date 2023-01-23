@@ -1,8 +1,7 @@
 package com.example.iprovider.web;
 
-import com.example.iprovider.data.TariffRepository;
 import com.example.iprovider.data.UserTariffsRepository;
-import com.example.iprovider.model.User;
+import com.example.iprovider.entities.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
