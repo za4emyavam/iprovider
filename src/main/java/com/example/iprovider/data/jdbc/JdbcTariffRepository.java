@@ -102,6 +102,11 @@ public class JdbcTariffRepository implements TariffRepository {
                 tariff.getStatus().name().toLowerCase(),
                 tariff.getTariffId()
         );
+        deleteTariffServicesByTariffId(tariff.getTariffId());
+        for (Service service :
+                tariff.getServices()) {
+            addServiceToTariff(tariff.getTariffId(), service);
+        }
         return tariff;
     }
 
@@ -157,5 +162,11 @@ public class JdbcTariffRepository implements TariffRepository {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
         return Long.parseLong(keyHolder.getKeys().get("tariff_services_id").toString());
+    }
+
+    private void deleteTariffServicesByTariffId(long tariffId) {
+        jdbcTemplate.update(
+                "delete from tariff_services where tariff_id=?", tariffId
+        );
     }
 }

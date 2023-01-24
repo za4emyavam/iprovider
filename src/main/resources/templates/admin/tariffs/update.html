@@ -11,43 +11,47 @@
 <div class="admin-container">
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
     <div class="admin-content" th:fragment="adminContent">
-        <form action="#" th:object="${tariff}" th:action="@{/admin/tariffs/create}" method="post">
-            <!--id="creatingTariffForm"-->
+        <form action="#" th:object="${tariff}"
+              th:action="@{/admin/tariffs/update(tariffId=${currentTariff.tariffId})}" method="post">
+            <input type="hidden" th:field="*{tariffId}" th:value="${currentTariff.tariffId}"/>
             <label for="name">Name:</label>
-            <input type="text" th:field="*{name}" name="name" id="name"/>
+            <input type="text" th:field="*{name}" name="name" id="name" th:placeholder="${currentTariff.name}"/>
             <span class="validationError"
                   th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
                 Name validation error
             </span><br/>
 
             <label for="description">Description:</label>
-            <input type="text" th:field="*{description}" name="description" id="description"/>
+            <input type="text" th:field="*{description}" name="description" id="description"
+                   th:placeholder="${currentTariff.description}"/>
             <span class="validationError"
                   th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
                 Description validation error
             </span><br/>
 
             <label for="cost">Cost:</label>
-            <input type="number" th:field="*{cost}" name="cost" id="cost"/>
+            <input type="number" th:field="*{cost}" name="cost" id="cost" th:placeholder="${currentTariff.cost}"/>
             <span class="validationError"
                   th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}">
                 Cost validation error
             </span><br/>
 
             <label for="frequencyOfPayment">Frequency of payment: </label>
-            <input type="number" th:field="*{frequencyOfPayment}" name="frequencyOfPayment" id="frequencyOfPayment"/>
+            <input type="number" th:field="*{frequencyOfPayment}" name="frequencyOfPayment"
+                   id="frequencyOfPayment" th:placeholder="${currentTariff.frequencyOfPayment}"/>
             <span class="validationError"
                   th:if="${#fields.hasErrors('frequencyOfPayment')}" th:errors="*{frequencyOfPayment}">
                 Frequency of payment validation error
             </span><br/>
 
-            <label>Status:</label><br/>
+            <label>Status:</label>
             <span class="validationError"
                   th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
                 Status validation error
             </span><br/>
+
             <input type="radio" th:field="*{status}" name="status" id="statusDisabled" value="DISABLED"
-                   th:text="Disabled" /><br/>
+                   th:text="Disabled"/><br/>
             <input type="radio" th:field="*{status}" name="status" id="statusActive" value="ACTIVE"
                    th:text="Active"/><br/>
 
@@ -58,7 +62,8 @@
                 Services validation error
             </span><br/>
             <div class="checkboxes-services" th:each="service : ${services}">
-                <input th:field="*{services}" type="checkbox" th:value="${service.serviceId}">
+                <input th:field="*{services}" type="checkbox" th:value="${service.serviceId}"
+                       th:id="'service_' + ${service.serviceId}"/>
                 <span th:text="${service.serviceType.toLowerCase()}">SERVICE</span><br/>
             </div>
 
@@ -67,5 +72,11 @@
         </form>
     </div>
 </div>
+<script>
+    var currentStatus = "[[${currentTariff.status}]]";
+    const services = [];
+    var list = [[${currentTariff.getIdOfServices}]];
+</script>
+<script th:src="@{/js/updateTariff.js}"></script>
 </body>
 </html>

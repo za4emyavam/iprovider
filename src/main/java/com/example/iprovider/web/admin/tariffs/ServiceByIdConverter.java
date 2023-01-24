@@ -1,4 +1,4 @@
-package com.example.iprovider.web.admin;
+package com.example.iprovider.web.admin.tariffs;
 
 import com.example.iprovider.data.ServiceRepository;
 import com.example.iprovider.entities.Service;

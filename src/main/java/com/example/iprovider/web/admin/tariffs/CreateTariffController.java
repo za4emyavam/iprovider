@@ -1,4 +1,4 @@
-package com.example.iprovider.web.admin;
+package com.example.iprovider.web.admin.tariffs;
 
 import com.example.iprovider.data.ServiceRepository;
 import com.example.iprovider.data.TariffRepository;
@@ -42,9 +42,6 @@ public class CreateTariffController {
             log.error("Validation error: {}", errors);
             return "admin/tariffs/create";
         }
-        System.out.println(tariff.getName());
-        System.out.println(tariff.getStatus());
-        System.out.println(tariff.getServices());
         tariffRepository.create(tariff);
         return "redirect:/admin/tariffs";
     }

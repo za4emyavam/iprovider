@@ -13,6 +13,9 @@
   <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
   <div class="admin-content" th:fragment="adminContent">
+    <form method="get" th:action="@{/admin/tariffs/create}" id="createTariff">
+      <input type="submit" id="create" name="create" value="Create new tariff"/>
+    </form>
     <table class="tariffs-table">
       <tr>
         <th class="tariff-table-th">Id</th>
@@ -37,7 +40,10 @@
           </div>
         </td>
         <td class="tariff-table-td">
-          <button onclick="th:href='@{/admin/tariffs/update(tariffId=${tariff.tariffId})}'" th:text="Update"/>
+          <!--<form method="get" th:action="@{/admin/tariffs/update(tariffId=${tariff.tariffId})}" id="updateTariff">
+            <input type="submit" id="update" name="update" value="Update"/>
+          </form>-->
+          <a th:href="@{/admin/tariffs/update(tariffId=${tariff.tariffId})}">Update</a>
           <form method="post" th:action="@{/admin/tariffs/delete(tariffId=${tariff.tariffId})}" id="deleteTariff">
             <input type="submit" id="delete" name="delete" value="Delete"/>
           </form>
