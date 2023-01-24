@@ -23,7 +23,7 @@ CREATE DATABASE  iprovider;*/
 CREATE TYPE role_type AS ENUM ('user', 'admin', 'main_admin');
 CREATE TYPE user_status_type AS ENUM ('subscribed', 'blocked');
 CREATE TYPE tariff_status_type AS ENUM ('disabled', 'active');
-CREATE TYPE request_status_type AS ENUM ('in processing', 'rejected', 'approved');
+CREATE TYPE request_status_type AS ENUM ('in_processing', 'rejected', 'approved');
 CREATE TYPE transaction_type AS ENUM ('debit', 'refill');
 CREATE TYPE transaction_status_type AS ENUM ('successful', 'denied');
 
@@ -145,7 +145,7 @@ CREATE TABLE connection_request
     address               VARCHAR(40)         NOT NULL,
     tariff                INTEGER             NOT NULL,
     date_of_change        date                NOT NULL DEFAULT CURRENT_DATE,
-    status                request_status_type NOT NULL DEFAULT 'in processing',
+    status                request_status_type NOT NULL DEFAULT 'in_processing',
     FOREIGN KEY (subscriber) REFERENCES "user" (user_id) ON DELETE CASCADE,
     FOREIGN KEY (tariff) REFERENCES tariff (tariff_id) ON DELETE CASCADE
 );
