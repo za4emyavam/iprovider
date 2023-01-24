@@ -35,7 +35,7 @@ public class UpdateTariffController {
         if (currentTariff.isEmpty())
             return "redirect:/admin/tariffs";
         model.addAttribute("currentTariff", currentTariff.get());
-        model.addAttribute("updatedTariff", new Tariff());
+        model.addAttribute("tariff", new Tariff());
         return "admin/tariffs/update";
     }
 
