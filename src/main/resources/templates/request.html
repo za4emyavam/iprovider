@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Something</h1>
+<form action="#" th:object="${connectionRequest}"
+      th:action="@{/tariffs/request(tariffId=${tariffId})}" method="post">
+    <!--<input type="hidden" th:field="*{subscriber}" th:value="${#authentication.principal.userId}">
+    <p>Current userId: <p th:text="${#authentication.principal.userId}"/></p>-->
+    <label for="city">City:</label>
+    <input type="text" th:field="*{city}" name="city" id="city"/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('city')}" th:errors="*{city}">
+                City validation error
+            </span><br/>
+
+    <label for="address">Description:</label>
+    <input type="text" th:field="*{address}" name="address" id="address"/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('address')}" th:errors="*{address}">
+                Address validation error
+            </span><br/>
+    <input type="submit" value="Create request"/>
+</form>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<div class="admin-header">
+    <h1>Welcome to your admin page</h1>
+</div>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+    <div class="admin-content" th:fragment="adminContent">
+        <div>
+            <p th:text="${connectionRequest.connectionRequestId}">Subscriber id: </p>
+            <p th:text="${subscriber.userId}">Subscriber id: </p>
+            <p th:text="${subscriber.email}">Email: </p>
+            <p th:text="${subscriber.firstname + ' ' + subscriber.surname}">Full name: </p>
+            <p th:text="${subscriber.userStatus}">Status: </p>
+            <p th:text="${subscriber.userBalance}">Balance: </p>
+            <p th:text="${subscriber.telephoneNumber}">Phone number: </p>
+            <p th:text="${connectionRequest.city}">City: </p>
+            <p th:text="${connectionRequest.address}">Address: </p>
+            <p th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}">Date of request: </p>
+            <p th:text="${connectionRequest.status}">Request status: </p>
+            <p th:text="${connectionRequest.tariff.name}">Tariff: </p>
+
+
+        </div>
+        <!--<form action="#" th:object="${connectionRequest}"
+              th:action="@{/admin/requests/update(tariffId=${c.tariffId})}" method="post">
+
+        </form>-->
+    </div>
+</div>
+</body>
+</html>

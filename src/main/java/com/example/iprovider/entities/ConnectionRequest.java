@@ -26,4 +26,10 @@ public class ConnectionRequest implements Serializable {
     public enum RequestStatusType {
         IN_PROCESSING, REJECTED, APPROVED
     }
+
+    public ConnectionRequest(Integer subscriber, String city, String address) {
+        this.subscriber = (long)subscriber;
+        this.city = city;
+        this.address = address;
+    }
 }

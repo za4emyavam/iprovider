@@ -9,6 +9,6 @@ public class AdminController {
 
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public String getAdminPage() {
-        return "admin";
+        return "redirect:/admin/requests";
     }
 }

@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public class JdbcUserRepository implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
@@ -64,11 +66,38 @@ public class JdbcUserRepository implements UserRepository {
         return users.size() == 0 ? null : users.get(0);
     }
 
+    @Override
+    public Optional<User> read(Long userId) {
+        List<User> results = jdbcTemplate.query(
+                "select user_id, email, registration_date, user_role," +
+                        " user_status, user_balance, firstname, surname, telephone_number " +
+                        "from \"user\" where user_id=?", this::mapRowToUserWithoutPass,
+                userId
+        );
+        return results.size() == 0 ?
+                Optional.empty() :
+                Optional.of(results.get(0));
+    }
+
     private User mapRowToUser(ResultSet row, int rowNum) throws SQLException {
         return new User(
                 row.getLong("user_id"),
                 row.getString("email"),
                 row.getString("pass"),
+                row.getDate("registration_date"),
+                User.RoleType.valueOf(row.getString("user_role").toUpperCase()),
+                User.UserStatusType.valueOf(row.getString("user_status").toUpperCase()),
+                row.getDouble("user_balance"),
+                row.getString("firstname"),
+                row.getString("surname"),
+                row.getString("telephone_number")
+        );
+    }
+
+    private User mapRowToUserWithoutPass(ResultSet row, int rowNum) throws SQLException {
+        return new User(
+                row.getLong("user_id"),
+                row.getString("email"),
                 row.getDate("registration_date"),
                 User.RoleType.valueOf(row.getString("user_role").toUpperCase()),
                 User.UserStatusType.valueOf(row.getString("user_status").toUpperCase()),

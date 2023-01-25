@@ -30,13 +30,12 @@
                 <td class="tariff-table-td" th:text="${request.status}"/>
             </tr>
         </table>
-        <!--TODO-->
-        <!--<div th:if="${page != 1}">
-            <a th:href="@{/admin/tariffs(page=${page-1},size=${size})}">Previous</a>
+        <div th:if="${page != 1}">
+            <a th:href="@{/admin/requests(page=${page-1},size=${size})}">Previous</a>
         </div>
         <div th:if="${page != maxPage}">
-            <a th:href="@{/admin/tariffs(page=${page+1},size=${size})}">Next</a>
-        </div>-->
+            <a th:href="@{/admin/requests(page=${page+1},size=${size})}">Next</a>
+        </div>
     </div>
 </div>
 </body>

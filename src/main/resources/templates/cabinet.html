@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Cabinet</title>
-    <link rel="stylesheet" th:href="@{/css/cabinet.css}" />
+    <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
 </head>
 <body>
 <div class="cabinet-header">
@@ -22,7 +22,8 @@
         </h1>
         <p>Email: <span th:text="${#authentication.name}"/></p>
         <p>Status: <span th:text="${#authentication.principal.userStatus}"/></p>
-        <p>Registration date: <span th:text="${#dates.format(#authentication.principal.registrationDate, 'dd-MM-yyyy')}"/></p>
+        <p>Registration date: <span
+                th:text="${#dates.format(#authentication.principal.registrationDate, 'dd-MM-yyyy')}"/></p>
         <p>Telephone number: <span th:text="${#authentication.principal.telephoneNumber}"/></p>
         <p>Balance: <span th:text="${#authentication.principal.userBalance}"/> ₴</p>
         <p>Connected Tariffs:</p>

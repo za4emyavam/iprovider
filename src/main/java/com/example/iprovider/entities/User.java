@@ -21,7 +21,7 @@ public class User implements UserDetails {
 
     private Long userId;
     private final String email;
-    private final String password;
+    private String password;
     private final Date registrationDate;
     private final RoleType userRole;
     private final UserStatusType userStatus;
@@ -43,6 +43,30 @@ public class User implements UserDetails {
             default -> Arrays.asList(
                     new SimpleGrantedAuthority("ROLE_USER"));
         };
+    }
+
+    public User(String email, String password, Date registrationDate, RoleType userRole, UserStatusType userStatus, Double userBalance, String firstname, String surname, String telephoneNumber) {
+        this.email = email;
+        this.password = password;
+        this.registrationDate = registrationDate;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
+        this.userBalance = userBalance;
+        this.firstname = firstname;
+        this.surname = surname;
+        this.telephoneNumber = telephoneNumber;
+    }
+
+    public User(Long userId, String email, Date registrationDate, RoleType userRole, UserStatusType userStatus, Double userBalance, String firstname, String surname, String telephoneNumber) {
+        this.userId = userId;
+        this.email = email;
+        this.registrationDate = registrationDate;
+        this.userRole = userRole;
+        this.userStatus = userStatus;
+        this.userBalance = userBalance;
+        this.firstname = firstname;
+        this.surname = surname;
+        this.telephoneNumber = telephoneNumber;
     }
 
     @Override

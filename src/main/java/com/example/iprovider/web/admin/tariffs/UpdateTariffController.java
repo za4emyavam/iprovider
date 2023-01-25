@@ -26,7 +26,7 @@ public class UpdateTariffController {
 
     @ModelAttribute
     public void addServicesToModel(Model model) {
-        model.addAttribute("services", serviceRepository.findAll());
+        model.addAttribute("services", serviceRepository.readAll());
     }
 
     @GetMapping

@@ -19,7 +19,7 @@ public class JdbcServiceRepository implements ServiceRepository {
     }
 
     @Override
-    public Iterable<Service> findAll() {
+    public Iterable<Service> readAll() {
         return jdbcTemplate.query(
                 "select * from service", this::mapRowToService
         );
