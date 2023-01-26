@@ -1,31 +1,72 @@
 package com.example.iprovider.web;
 
+import com.example.iprovider.data.TransactionRepository;
 import com.example.iprovider.data.UserTariffsRepository;
+import com.example.iprovider.entities.Transaction;
 import com.example.iprovider.entities.User;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+@Slf4j
 @Controller
-@RequestMapping("/cabinet")
 public class CabinetController {
     private final UserTariffsRepository userTariffsRepository;
+    private final TransactionRepository transactionRepository;
 
-    public CabinetController(UserTariffsRepository userTariffsRepository) {
+    public CabinetController(UserTariffsRepository userTariffsRepository,
+                             TransactionRepository transactionRepository) {
         this.userTariffsRepository = userTariffsRepository;
+        this.transactionRepository = transactionRepository;
     }
 
-    @ModelAttribute
-    public void addTariffsToModel(Model model, Authentication authentication) {
+    @RequestMapping(value = "/cabinet", method = RequestMethod.GET)
+    public String cabinet() {
+        return "redirect:/cabinet/profile";
+    }
+
+    @RequestMapping(value = "/cabinet/refill", method = RequestMethod.GET)
+    public String getRefill(Model model) {
+        model.addAttribute("transaction", new Transaction());
+        return "cabinet/refill";
+    }
+
+    @RequestMapping(value = "/cabinet/profile", method = RequestMethod.GET)
+    public String cabinetModel(Model model, Authentication authentication) {
         User userDetails = (User) authentication.getPrincipal();
         model.addAttribute("tariffs", userTariffsRepository.readById(userDetails.getUserId()));
+        return "cabinet/profile";
     }
 
-    @GetMapping
-    public String cabinet() {
-        return "cabinet";
+    @RequestMapping(value = "/cabinet/refill", method = RequestMethod.POST)
+    public String processRefill(@ModelAttribute @Valid Transaction transaction,
+                                Errors errors,
+                                Authentication authentication) {
+        if (errors.hasErrors()) {
+            log.error("Validation error {}", errors);
+            return "cabinet/refill";
+        }
+        User userDetails = (User) authentication.getPrincipal();
+        transaction.setBalanceId(userDetails.getUserId());
+        transaction.setType(Transaction.TransactionType.REFILL);
+        transaction.setTransactionStatus(Transaction.TransactionStatusType.DENIED);
+        transactionRepository.create(transaction);
+        return "redirect:/cabinet";
+    }
+
+    @RequestMapping(value = "/cabinet/history", method = RequestMethod.GET)
+    public String getHistory(Model model, Authentication authentication, @RequestParam(defaultValue = "1") int page,
+                             @RequestParam(defaultValue = "5") int size) {
+        User userDetails = (User) authentication.getPrincipal();
+        model.addAttribute("transactions", transactionRepository.readAllByUserBalanceId(userDetails.getUserId(), page, size));
+        //TODO size and buttons to pagination
+        return "cabinet/history";
     }
 }

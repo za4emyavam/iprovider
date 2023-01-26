@@ -12,25 +12,30 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
     <div class="admin-content" th:fragment="adminContent">
         <div>
-            <p th:text="${connectionRequest.connectionRequestId}">Subscriber id: </p>
-            <p th:text="${subscriber.userId}">Subscriber id: </p>
-            <p th:text="${subscriber.email}">Email: </p>
-            <p th:text="${subscriber.firstname + ' ' + subscriber.surname}">Full name: </p>
-            <p th:text="${subscriber.userStatus}">Status: </p>
-            <p th:text="${subscriber.userBalance}">Balance: </p>
-            <p th:text="${subscriber.telephoneNumber}">Phone number: </p>
-            <p th:text="${connectionRequest.city}">City: </p>
-            <p th:text="${connectionRequest.address}">Address: </p>
-            <p th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}">Date of request: </p>
-            <p th:text="${connectionRequest.status}">Request status: </p>
-            <p th:text="${connectionRequest.tariff.name}">Tariff: </p>
+            <p>Request id: <span th:text="${connectionRequest.connectionRequestId}"/></p>
+            <p>Subscriber id: <span th:text="${subscriber.userId}"/></p>
+            <p>Email: <span th:text="${subscriber.email}"/> </p>
+            <p>Full name: <span th:text="${subscriber.firstname + ' ' + subscriber.surname}"/></p>
+            <p>Status: <span th:text="${subscriber.userStatus}"/></p>
+            <p>Balance: <span th:text="${subscriber.userBalance}"/> </p>
+            <p>Phone number: <span th:text="${subscriber.telephoneNumber}"/></p>
+            <p>City: <span th:text="${connectionRequest.city}"/></p>
+            <p>Address: <span th:text="${connectionRequest.address}"/> </p>
+            <p>Date of request: <span th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}"/> </p>
+            <p>Request status: <span th:text="${connectionRequest.status}"/></p>
+            <p>Tariff: <span th:text="${connectionRequest.tariff.name}"/></p>
 
 
         </div>
-        <!--<form action="#" th:object="${connectionRequest}"
-              th:action="@{/admin/requests/update(tariffId=${c.tariffId})}" method="post">
-
-        </form>-->
+        <form action="#"
+              th:action="@{/admin/requests/update(requestId=${connectionRequest.connectionRequestId})}" method="post">
+            <select name="status">
+                <div th:each="status : ${statuses}">
+                    <option th:value="${status.name()}" th:text="${status}"/>
+                </div>
+            </select>
+            <input type="submit" value="Update request"/>
+        </form>
     </div>
 </div>
 </body>

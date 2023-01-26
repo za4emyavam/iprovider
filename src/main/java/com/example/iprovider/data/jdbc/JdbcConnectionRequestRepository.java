@@ -97,6 +97,22 @@ public class JdbcConnectionRequestRepository implements ConnectionRequestReposit
                 Optional.of(results.get(0));
     }
 
+    @Override
+    public ConnectionRequest update(ConnectionRequest connectionRequest) {
+        jdbcTemplate.update(
+                "update connection_request " +
+                        "set city=?, address=?, tariff=?, date_of_change=?, status=?::request_status_type " +
+                        "where connection_request_id=?",
+                connectionRequest.getCity(),
+                connectionRequest.getAddress(),
+                connectionRequest.getTariff().getTariffId(),
+                connectionRequest.getDateOfChange(),
+                connectionRequest.getStatus().name().toLowerCase(),
+                connectionRequest.getConnectionRequestId()
+        );
+        return connectionRequest;
+    }
+
     private ConnectionRequest mapRowToConnectionRequest(ResultSet rs, int rowNum) throws SQLException {
         return new ConnectionRequest(
                 rs.getLong("connection_request_id"),

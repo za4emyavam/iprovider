@@ -25,7 +25,7 @@ CREATE TYPE user_status_type AS ENUM ('subscribed', 'blocked');
 CREATE TYPE tariff_status_type AS ENUM ('disabled', 'active');
 CREATE TYPE request_status_type AS ENUM ('in_processing', 'rejected', 'approved');
 CREATE TYPE transaction_type AS ENUM ('debit', 'refill');
-CREATE TYPE transaction_status_type AS ENUM ('successful', 'denied');
+CREATE TYPE transaction_status_type AS ENUM ('SUCCESSFUL', 'DENIED');
 
 CREATE TABLE "user"
 (
@@ -78,17 +78,17 @@ BEGIN
         UPDATE "user" u
         SET user_balance=add(temp_user_balance, NEW.transaction_amount)
         WHERE NEW.balance_id = user_id;
-        UPDATE transaction t SET transaction_status='successful' WHERE t.transaction_id = New.transaction_id;
+        UPDATE transaction t SET transaction_status='SUCCESSFUL' WHERE t.transaction_id = New.transaction_id;
     ELSE
         IF (temp_user_balance >= NEW.transaction_amount) THEN
             UPDATE "user" u
             SET user_balance=subtract(user_balance, NEW.transaction_amount)
             WHERE NEW.balance_id = user_id;
-            UPDATE transaction t SET transaction_status='successful' WHERE t.transaction_id = New.transaction_id;
+            UPDATE transaction t SET transaction_status='SUCCESSFUL' WHERE t.transaction_id = New.transaction_id;
             UPDATE "user" u SET user_status='subscribed' WHERE u.user_id = NEW.balance_id;
         ELSE
             UPDATE "user" u SET user_status='blocked' WHERE u.user_id = NEW.balance_id;
-            UPDATE transaction t SET transaction_status='denied' WHERE t.transaction_id = New.transaction_id;
+            UPDATE transaction t SET transaction_status='DENIED' WHERE t.transaction_id = New.transaction_id;
         END IF;
     END IF;
     RETURN NEW;
@@ -244,7 +244,7 @@ BEGIN
                 VALUES ($1, 'debit', temp_tariff_cost, CURRENT_DATE, NULL)
                 RETURNING transaction_id INTO temp_id;
                 SELECT INTO temp_status transaction_status FROM transaction t WHERE transaction_id = temp_id;
-                IF (temp_status = 'successful') THEN
+                IF (temp_status = 'SUCCESSFUL') THEN
                     UPDATE user_tariffs ut
                     SET date_of_last_payment=CURRENT_DATE
                     WHERE user_id = $1
@@ -337,7 +337,7 @@ INSERT INTO user_tariffs(user_id, tariff_id, date_of_start, date_of_last_payment
 VALUES (1, 2, '2022-09-19'::DATE, '2022-09-19'::DATE);
 
 INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
-VALUES (1, 'debit', 180.00, '2022-09-19'::DATE, 'successful');
+VALUES (1, 'debit', 180.00, '2022-09-19'::DATE, 'SUCCESSFUL');
 
 INSERT INTO request_additional_services (request_id, services_id)
 VALUES (1, 1),

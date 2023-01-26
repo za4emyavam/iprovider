@@ -6,9 +6,7 @@ import com.example.iprovider.entities.ConnectionRequest;
 import com.example.iprovider.entities.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -35,6 +33,21 @@ public class UpdateRequestController {
         }
         model.addAttribute("connectionRequest", connectionRequest.get());
         model.addAttribute("subscriber", subscriber.get());
+        model.addAttribute("statuses", ConnectionRequest.RequestStatusType.values());
         return "admin/requests/update";
+    }
+
+    @PostMapping
+    public String processRequest(@RequestParam long requestId,
+                                 @RequestParam("status") String status) {
+        Optional<ConnectionRequest> connectionRequest = connectionRequestRepository.read(requestId);
+        if (connectionRequest.isEmpty()) {
+            return "redirect:/admin/requests";
+        }
+        System.out.println("Status ->" + status);
+        ConnectionRequest request = connectionRequest.get();
+        request.setStatus(ConnectionRequest.RequestStatusType.valueOf(status));
+        connectionRequestRepository.update(request);
+        return "redirect:/admin/requests";
     }
 }

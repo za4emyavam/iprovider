@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Cabinet</title>
+  <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+</head>
+<body>
+<div class="cabinet-header">
+  <h1>Welcome to your Cabinet</h1>
+</div>
+<div class="cabinet-container">
+  <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
+  </div>
+  <div class="cabinet-content" th:fragment="cabinetContent">
+    <h1>Refill</h1>
+    <form action="#" th:action="@{/cabinet/refill}" th:object="${transaction}" method="post">
+      <label for="transactionAmount">Amount: </label>
+      <input type="number" th:field="*{transactionAmount}" id="transactionAmount">
+      <input type="submit" value="Refill"/>
+    </form>
+  </div>
+</div>
+</body>
+</html>

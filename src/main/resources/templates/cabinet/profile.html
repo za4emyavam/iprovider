@@ -9,14 +9,7 @@
     <h1>Welcome to your Cabinet</h1>
 </div>
 <div class="cabinet-container">
-    <div class="cabinet-sidebar" th:fragment="cabinetSideBar">
-        <ul>
-            <li><a th:href="@{/cabinet/profile}">Profile</a></li>
-            <li><a th:href="@{/cabinet/history}">History</a></li>
-            <li><a th:href="@{/cabinet/services}">Services</a></li>
-            <li><a th:href="@{/cabinet/requests}">Requests</a></li>
-            <li><a th:href="@{/cabinet/refill}">Top up balance</a></li>
-        </ul>
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
     </div>
     <div class="cabinet-content" th:fragment="cabinetContent">
         <h1>Welcome to your Cabinet,

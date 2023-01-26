@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Cabinet</title>
+  <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+</head>
+<body>
+<div class="cabinet-header">
+  <h1>Welcome to your Cabinet</h1>
+</div>
+<div class="cabinet-container">
+  <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
+  </div>
+  <div class="cabinet-content" th:fragment="cabinetContent">
+    <h1>History</h1>
+    <table class="transaction-table">
+      <tr>
+        <th class="transaction-table-th">Id</th>
+        <th class="transaction-table-th">Type</th>
+        <th class="transaction-table-th">Amount</th>
+        <th class="transaction-table-th">Date</th>
+        <th class="transaction-table-th">Status</th>
+      </tr>
+      <tr th:each="transaction : ${transactions}">
+        <td class="transaction-table-td" th:text="${transaction.transactionId}"/>
+        <td class="transaction-table-td" th:text="${transaction.type.name()}"/>
+        <td class="transaction-table-td" th:text="${transaction.transactionAmount}"/>
+        <td class="transaction-table-td" th:text="${#dates.format(transaction.transactionDate, 'dd-MM-yyyy')}"/>
+        <td class="transaction-table-td" th:text="${transaction.transactionStatus.name()}"/>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>
