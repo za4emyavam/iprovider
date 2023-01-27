@@ -1,12 +1,15 @@
 package com.example.iprovider.web;
 
 import com.example.iprovider.data.TransactionRepository;
+import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.data.UserTariffsRepository;
 import com.example.iprovider.entities.Transaction;
 import com.example.iprovider.entities.User;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -20,11 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CabinetController {
     private final UserTariffsRepository userTariffsRepository;
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
 
     public CabinetController(UserTariffsRepository userTariffsRepository,
-                             TransactionRepository transactionRepository) {
+                             TransactionRepository transactionRepository,
+                             UserRepository userRepository) {
         this.userTariffsRepository = userTariffsRepository;
         this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
     }
 
     @RequestMapping(value = "/cabinet", method = RequestMethod.GET)
@@ -40,7 +46,12 @@ public class CabinetController {
 
     @RequestMapping(value = "/cabinet/profile", method = RequestMethod.GET)
     public String cabinetModel(Model model, Authentication authentication) {
-        User userDetails = (User) authentication.getPrincipal();
+        //Updates authentication
+        User user = userRepository.findByUsername(authentication.getName());
+        Authentication updatedAuthentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
+
+        User userDetails = (User) updatedAuthentication.getPrincipal();
         model.addAttribute("tariffs", userTariffsRepository.readById(userDetails.getUserId()));
         return "cabinet/profile";
     }
@@ -56,17 +67,27 @@ public class CabinetController {
         User userDetails = (User) authentication.getPrincipal();
         transaction.setBalanceId(userDetails.getUserId());
         transaction.setType(Transaction.TransactionType.REFILL);
-        transaction.setTransactionStatus(Transaction.TransactionStatusType.DENIED);
-        transactionRepository.create(transaction);
+        transaction.setTransactionStatus(Transaction.TransactionStatusType.SUCCESSFUL);
+        Transaction transaction1 = transactionRepository.create(transaction);
+        System.out.println(transaction1);
         return "redirect:/cabinet";
     }
 
     @RequestMapping(value = "/cabinet/history", method = RequestMethod.GET)
-    public String getHistory(Model model, Authentication authentication, @RequestParam(defaultValue = "1") int page,
+    public String getHistory(Model model, Authentication authentication,
+                             @RequestParam(defaultValue = "1") int page,
                              @RequestParam(defaultValue = "5") int size) {
         User userDetails = (User) authentication.getPrincipal();
         model.addAttribute("transactions", transactionRepository.readAllByUserBalanceId(userDetails.getUserId(), page, size));
-        //TODO size and buttons to pagination
+
+        int number = transactionRepository.getAmountByUserBalanceId(userDetails.getUserId());
+        int maxPage = (int)Math.ceil(number * 1.0 / size);
+        if (page <= 0 || page > maxPage) {
+            page = 1;
+        }
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        model.addAttribute("maxPage", maxPage);
         return "cabinet/history";
     }
 }

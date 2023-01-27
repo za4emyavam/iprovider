@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<div class="admin-header">
+    <h1>Welcome to your admin page</h1>
+</div>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+    <div class="admin-content" th:fragment="adminContent">
+        <div>
+            <p>User id: <span th:text="${user.userId}"/></p>
+            <p>Email: <span th:text="${user.email}"/></p>
+            <p>Full name: <span th:text="${user.firstname + ' ' + user.surname}"/></p>
+            <p>Role: <span th:text="${user.userRole}"/></p>
+            <p>Status: <span th:text="${user.userStatus}"/></p>
+            <p>Balance: <span th:text="${user.userBalance}"/></p>
+            <p>Phone number: <span th:text="${user.telephoneNumber}"/></p>
+            <p>Registration date: <span th:text="${#dates.format(user.registrationDate, 'dd-MM-yyyy')}"/></p>
+            <div th:if="${userTariffs.size() == 0}">
+                <p>Has no tariffs</p>
+            </div>
+            <div th:if="${userTariffs.size() != 0}">
+                <p>Connected Tariffs:</p>
+                <table class="tariffs-table">
+                    <tr>
+                        <th class="tariff-table-th">Id</th>
+                        <th class="tariff-table-th">Name</th>
+                        <th class="tariff-table-th">Description</th>
+                        <th class="tariff-table-th">Cost</th>
+                        <th class="tariff-table-th">Frequency of payment</th>
+                        <th class="tariff-table-th">Service</th>
+                        <th class="tariff-table-th">Date Of Start</th>
+                        <th class="tariff-table-th">Date Of last payment</th>
+                    </tr>
+                    <tr th:each="tariff : ${userTariffs}">
+                        <td class="tariff-table-td" th:text="${tariff.tariffId.tariffId}"/>
+                        <td class="tariff-table-td" th:text="${tariff.tariffId.name}"/>
+                        <td class="tariff-table-td" th:text="${tariff.tariffId.description}"/>
+                        <td class="tariff-table-td" th:text="${tariff.tariffId.cost}"/>
+                        <td class="tariff-table-td" th:text="${tariff.tariffId.frequencyOfPayment}"/>
+                        <td class="tariff-table-td">
+                            <div th:each="service : ${tariff.tariffId.getServices()}">
+                                <p th:text="${service.serviceType}"></p>
+                            </div>
+                        </td>
+                        <td class="tariff-table-td" th:text="${#dates.format(tariff.dateOfStart, 'dd-MM-yyyy')}"/>
+                        <td class="tariff-table-td" th:text="${tariff.dateOfLastPayment}"/>
+
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <form action="#"
+              th:action="@{/admin/users/user_info(userId=${user.userId})}" method="post" th:object="${userInfoForm}">
+            <!--TODO-->
+            <input type="hidden" th:field="*{command}" th:value="STATUS" id="command" name="command"/>
+            <select th:field="*{value}">
+                <option th:value="SUBSCRIBED" th:text="Subscribed"/>
+                <option th:value="BLOCKED" th:text="Blocked"/>
+            </select>
+            <input type="submit" value="Update user status"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>

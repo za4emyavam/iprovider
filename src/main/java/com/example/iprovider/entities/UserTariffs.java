@@ -12,7 +12,7 @@ import java.util.Date;
 public class UserTariffs {
     private Long user_tariffs_id;
     private final Long userId;
-    private final Tariff tariff_id;
+    private final Tariff tariffId;
     private final Date dateOfStart;
     private final Date dateOfLastPayment;
 }

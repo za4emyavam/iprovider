@@ -63,6 +63,13 @@ public class JdbcTransactionRepository implements TransactionRepository {
         );
     }
 
+    @Override
+    public Integer getAmountByUserBalanceId(long balanceId) {
+        return jdbcTemplate.query("select count(transaction_id) from transaction where balance_id=?",
+                        (rs, rowNum) -> rs.getInt(1), balanceId)
+                .get(0);
+    }
+
     private Transaction mapRowToTransaction(ResultSet rs, int rowNum) throws SQLException {
         return new Transaction(
                 rs.getLong("transaction_id"),

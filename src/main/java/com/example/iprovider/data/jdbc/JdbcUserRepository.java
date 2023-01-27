@@ -79,6 +79,21 @@ public class JdbcUserRepository implements UserRepository {
                 Optional.of(results.get(0));
     }
 
+    @Override
+    public Iterable<User> readAll(int page, int size) {
+        int offset = (page - 1) * size;
+        return jdbcTemplate.query(
+                "select * from \"user\" order by user_id limit ? offset ?",
+                this::mapRowToUserWithoutPass, size, offset);
+    }
+
+    @Override
+    public Integer getAmount() {
+        return jdbcTemplate.query("select count(user_id) from \"user\"",
+                (rs, rowNum) -> rs.getInt(1))
+                .get(0);
+    }
+
     private User mapRowToUser(ResultSet row, int rowNum) throws SQLException {
         return new User(
                 row.getLong("user_id"),
