@@ -20,15 +20,15 @@ public class User implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private Long userId;
-    private final String email;
+    private String email;
     private String password;
-    private final Date registrationDate;
-    private final RoleType userRole;
-    private final UserStatusType userStatus;
-    private final Double userBalance;
-    private final String firstname;
-    private final String surname;
-    private final String telephoneNumber;
+    private Date registrationDate;
+    private RoleType userRole;
+    private UserStatusType userStatus;
+    private Double userBalance;
+    private String firstname;
+    private String surname;
+    private String telephoneNumber;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -10,5 +10,6 @@ public interface UserRepository {
     User findByUsername(String username);
     Optional<User> read(Long userId);
     Iterable<User> readAll(int page, int size);
+    User update(User user);
     Integer getAmount();
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/admin/tariffs.css}"/>
+</head>
+<body>
+<div class="admin-header">
+    <h1>Welcome to your admin page</h1>
+</div>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+
+    <div class="admin-content" th:fragment="adminContent">
+        <h1>Checks of payments</h1>
+        <form action="#" th:action="@{/admin/check_payments}" method="post" id="checkPaymentsForm">
+            <input type="submit" value="Check payment">
+        </form>
+        <table class="tariffs-table">
+            <tr>
+                <th class="tariff-table-th">Id</th>
+                <th class="tariff-table-th">Checker ID</th>
+                <th class="tariff-table-th">Amount of users</th>
+                <th class="tariff-table-th">Amount of money</th>
+                <th class="tariff-table-th">Date of check</th>
+            </tr>
+            <tr th:each="check : ${checks}">
+                <td class="tariff-table-td" th:text="${check.checkId}"/>
+                <td class="tariff-table-td" th:text="${check.checkerId}"/>
+                <td class="tariff-table-td" th:text="${check.users}"/>
+                <td class="tariff-table-td" th:text="${check.amount}"/>
+                <td class="tariff-table-td" th:text="${#dates.format(check.dateOfCheck, 'dd-MM-yyyy')}"/>
+            </tr>
+        </table>
+        <!--TODO-->
+        <div th:if="${page != 1}">
+            <a th:href="@{/admin/check_payments(page=${page-1},size=${size})}">Previous</a>
+        </div>
+        <div th:if="${page != maxPage}">
+            <a th:href="@{/admin/check_payments(page=${page+1},size=${size})}">Next</a>
+        </div>
+    </div>
+</div>
+<script>
+    var form = document.getElementById("checkPaymentsForm");
+    form.addEventListener("submit", function (event) {
+        validateForm(event)
+    });
+
+    function validateForm(event) {
+        event.preventDefault();
+        if (confirm("Check payments")) {
+            form.submit();
+        }
+    }
+</script>
+</body>
+</html>

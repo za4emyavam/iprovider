@@ -88,6 +88,20 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public User update(User user) {
+        jdbcTemplate.update(
+                "update \"user\" u set email=?, user_role=?::role_type, " +
+                        "user_status=?::user_status_type, telephone_number=? where user_id=?",
+                user.getEmail(),
+                user.getUserRole().name().toLowerCase(),
+                user.getUserStatus().name().toLowerCase(),
+                user.getTelephoneNumber(),
+                user.getUserId()
+        );
+        return user;
+    }
+
+    @Override
     public Integer getAmount() {
         return jdbcTemplate.query("select count(user_id) from \"user\"",
                 (rs, rowNum) -> rs.getInt(1))

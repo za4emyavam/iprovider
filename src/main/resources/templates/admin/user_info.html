@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
@@ -16,7 +17,23 @@
             <p>Email: <span th:text="${user.email}"/></p>
             <p>Full name: <span th:text="${user.firstname + ' ' + user.surname}"/></p>
             <p>Role: <span th:text="${user.userRole}"/></p>
+            <form sec:authorize="hasRole('MAIN_ADMIN')" action="#"
+                  th:action="@{/admin/users/user_info(userId=${user.userId},command='role')}" method="post" th:object="${userInfoForm}">
+                <select th:field="*{value}">
+                    <option th:value="ADMIN" th:text="Admin"/>
+                    <option th:value="USER" th:text="User"/>
+                </select>
+                <input type="submit" value="Update user role"/>
+            </form>
             <p>Status: <span th:text="${user.userStatus}"/></p>
+            <form action="#"
+                  th:action="@{/admin/users/user_info(userId=${user.userId},command='status')}" method="post" th:object="${userInfoForm}">
+                <select th:field="*{value}">
+                    <option th:value="SUBSCRIBED" th:text="Subscribed"/>
+                    <option th:value="BLOCKED" th:text="Blocked"/>
+                </select>
+                <input type="submit" value="Update user status"/>
+            </form>
             <p>Balance: <span th:text="${user.userBalance}"/></p>
             <p>Phone number: <span th:text="${user.telephoneNumber}"/></p>
             <p>Registration date: <span th:text="${#dates.format(user.registrationDate, 'dd-MM-yyyy')}"/></p>
@@ -55,16 +72,6 @@
             </div>
 
         </div>
-        <form action="#"
-              th:action="@{/admin/users/user_info(userId=${user.userId})}" method="post" th:object="${userInfoForm}">
-            <!--TODO-->
-            <input type="hidden" th:field="*{command}" th:value="STATUS" id="command" name="command"/>
-            <select th:field="*{value}">
-                <option th:value="SUBSCRIBED" th:text="Subscribed"/>
-                <option th:value="BLOCKED" th:text="Blocked"/>
-            </select>
-            <input type="submit" value="Update user status"/>
-        </form>
     </div>
 </div>
 </body>

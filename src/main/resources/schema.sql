@@ -1,12 +1,13 @@
 DROP FUNCTION if exists f_check_payment(integer);
+DROP FUNCTION if exists f_check_payment_by_user_id(integer);
 DROP TABLE if exists request_additional_services;
 DROP TABLE if exists connection_request;
 DROP TABLE if exists user_tariffs;
 DROP TABLE if exists tariff_services;
 DROP TABLE if exists tariff;
 DROP TABLE if exists transaction;
+DROP TABLE if exists checks;
 DROP TABLE if exists "user";
-DROP TABLE if exists user_info;
 DROP TABLE if exists service;
 DROP TABLE if exists additional_service;
 DROP TYPE if exists role_type;
@@ -209,7 +210,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION f_check_payment_by_user_id(integer) RETURNS INTEGER
+/*CREATE OR REPLACE FUNCTION f_check_payment_by_user_id(integer) RETURNS INTEGER
     LANGUAGE plpgsql AS
 $$
 DECLARE
@@ -270,6 +271,142 @@ BEGIN
             PERFORM f_check_payment_by_user_id(temp_users_id[var]);
         end loop;
     RETURN;
+END;
+$$;*/
+
+CREATE TABLE checks (
+                        check_id SERIAL PRIMARY KEY,
+                        checker_id integer,
+                        users integer,
+                        amount decimal,
+                        date_of_check timestamp,
+                        FOREIGN KEY (checker_id) REFERENCES "user" (user_id) ON DELETE CASCADE
+);
+
+
+CREATE OR REPLACE FUNCTION f_check_payment_by_user_id(integer) RETURNS DECIMAL
+    LANGUAGE plpgsql AS
+$$
+DECLARE
+    temp_tariffs              integer[];
+    temp_date_of_last_payment timestamp;
+    temp_frequency_of_payment integer;
+    temp_tariff_cost          DECIMAL;
+    temp_id                   integer;
+    temp_status               transaction_status_type;
+    temp_sum                  DECIMAL;
+    temp_tariff integer;
+BEGIN
+    temp_sum = 0;
+    temp_tariffs := ARRAY(
+            SELECT tariff_id FROM user_tariffs ut WHERE user_id = $1
+        );
+    IF (array_length(temp_tariffs, 1) < 1) THEN
+        RETURN temp_sum;
+    end if;
+    /*FOR var in array_lower(temp_tariffs, 1)..array_upper(temp_tariffs, 1)
+        loop
+            SELECT INTO temp_frequency_of_payment frequency_of_payment
+            FROM tariff t
+            WHERE tariff_id = temp_tariffs[var];
+            SELECT INTO temp_date_of_last_payment date_of_last_payment
+            FROM user_tariffs ut
+            WHERE user_id = $1
+              AND tariff_id = temp_tariffs[var];
+            IF (temp_date_of_last_payment IS NULL OR
+                datediff('day', temp_date_of_last_payment::DATE, NOW()::DATE) > temp_frequency_of_payment) THEN
+                SELECT INTO temp_tariff_cost cost
+                FROM tariff t
+                WHERE tariff_id = temp_tariffs[var];
+                INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
+                VALUES ($1, 'debit', temp_tariff_cost, now(), NULL)
+                RETURNING transaction_id INTO temp_id;
+                SELECT INTO temp_status transaction_status FROM transaction t WHERE transaction_id = temp_id;
+                IF (temp_status = 'successful') THEN
+                    UPDATE user_tariffs ut
+                    SET date_of_last_payment=now()
+                    WHERE user_id = $1
+                      AND tariff_id = temp_tariffs[var];
+                    temp_sum = temp_sum + temp_tariff_cost;
+                end if;
+            end if;
+        end loop;
+    RETURN temp_sum;*/
+    FOR temp_tariff in
+        SELECT tariff_id FROM user_tariffs ut WHERE user_id = $1
+        loop
+            SELECT INTO temp_frequency_of_payment frequency_of_payment
+            FROM tariff t
+            WHERE tariff_id = temp_tariff;
+            SELECT INTO temp_date_of_last_payment date_of_last_payment
+            FROM user_tariffs ut
+            WHERE user_id = $1
+              AND tariff_id = temp_tariff;
+            IF (temp_date_of_last_payment IS NULL OR
+                datediff('day', temp_date_of_last_payment::DATE, NOW()::DATE) > temp_frequency_of_payment) THEN
+                SELECT INTO temp_tariff_cost cost
+                FROM tariff t
+                WHERE tariff_id = temp_tariff;
+                INSERT INTO transaction(balance_id, type, transaction_amount, transaction_date, transaction_status)
+                VALUES ($1, 'debit', temp_tariff_cost, now(), NULL)
+                RETURNING transaction_id INTO temp_id;
+                SELECT INTO temp_status transaction_status FROM transaction t WHERE transaction_id = temp_id;
+                IF (temp_status = 'SUCCESSFUL') THEN
+                    UPDATE user_tariffs ut
+                    SET date_of_last_payment=now()
+                    WHERE user_id = $1
+                      AND tariff_id = temp_tariff;
+                    temp_sum = temp_sum + temp_tariff_cost;
+                end if;
+            end if;
+        end loop;
+    RETURN temp_sum;
+
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION f_check_payment(integer)
+    RETURNS TABLE
+            (
+                num_of_users  integer,
+                amount_of_all decimal
+            )
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    temp_users_id integer[];
+    temp_amount   decimal;
+    num_of_users  integer;
+    amount_of_all decimal;
+    temp_user_id integer;
+BEGIN
+    num_of_users = 0;
+    amount_of_all = 0;
+    temp_users_id := ARRAY(
+            SELECT DISTINCT user_id FROM user_tariffs
+        );
+    FOR var in array_lower(temp_users_id, 1)..array_upper(temp_users_id, 1)
+        loop
+            SELECT INTO temp_amount f_check_payment_by_user_id(temp_users_id[var]);
+            IF (temp_amount > 0) THEN
+                num_of_users = num_of_users + 1;
+                amount_of_all = amount_of_all + temp_amount;
+            end if;
+        end loop;
+    INSERT INTO checks VALUES (DEFAULT, $1, num_of_users, amount_of_all, NOW());
+    RETURN QUERY SELECT num_of_users, amount_of_all;
+    /*for temp_user_id in
+        select distinct user_id from user_tariffs
+    loop
+            SELECT INTO temp_amount f_check_payment_by_user_id(temp_user_id);
+            IF (temp_amount > 0) THEN
+                num_of_users = num_of_users + 1;
+                amount_of_all = amount_of_all + temp_amount;
+            end if;
+        end loop;
+    INSERT INTO checks VALUES (DEFAULT, $1, num_of_users, amount_of_all, NOW());
+    RETURN QUERY SELECT num_of_users, amount_of_all;*/
 END;
 $$;
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,23 +59,27 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/admin/users/user_info", method = RequestMethod.POST)
-    public String processUserInfoPage(@ModelAttribute UserInfoForm userInfoForm, @RequestParam long userId) {
-        System.out.println(userInfoForm);
+    public String processUserInfoPage(RedirectAttributes redirectAttributes,
+                                      @ModelAttribute UserInfoForm userInfoForm,
+                                      @RequestParam long userId,
+                                      @RequestParam String command) {
         Optional<User> user = userRepository.read(userId);
         if (user.isEmpty()) {
             return "redirect:/admin/users";
         }
-        switch (userInfoForm.getCommand()) {
+        switch (command) {
             case "status":
-                System.out.println("STATUS + " + userInfoForm.getValue());
+                user.get().setUserStatus(User.UserStatusType.valueOf(userInfoForm.getValue()));
+                userRepository.update(user.get());
                 break;
             case "role":
-                System.out.println("ROLE + " + userInfoForm.getValue());
+                user.get().setUserRole(User.RoleType.valueOf(userInfoForm.getValue()));
+                userRepository.update(user.get());
                 break;
             default:
                 return "redirect:/admin/users";
         }
-
-        return "admin/user_info";
+        redirectAttributes.addAttribute("userId", userId);
+        return "redirect:/admin/users/user_info";
     }
 }
