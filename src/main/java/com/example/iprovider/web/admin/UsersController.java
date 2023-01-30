@@ -3,7 +3,7 @@ package com.example.iprovider.web.admin;
 import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.data.UserTariffsRepository;
 import com.example.iprovider.entities.User;
-import com.example.iprovider.entities.UserInfoForm;
+import com.example.iprovider.entities.forms.UserInfoForm;
 import com.example.iprovider.entities.UserTariffs;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

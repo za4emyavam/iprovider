@@ -36,13 +36,13 @@
             </tr>
             <tr th:each="tariff : ${tariffs}">
                 <!--<td class="tariff-table-td" th:text="${tariff.tariffId}"/>-->
-                <td class="tariff-table-td" th:text="${tariff.tariff_id.name}"/>
-                <td class="tariff-table-td" th:text="${tariff.tariff_id.description}"/>
-                <td class="tariff-table-td" th:text="${tariff.tariff_id.cost}"/>
-                <td class="tariff-table-td" th:text="${tariff.tariff_id.frequencyOfPayment}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariffId.name}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariffId.description}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariffId.cost}"/>
+                <td class="tariff-table-td" th:text="${tariff.tariffId.frequencyOfPayment}"/>
                 <!--<td class="tariff-table-td" th:text="${tariff.status}"/>-->
                 <td class="tariff-table-td">
-                    <div th:each="service : ${tariff.tariff_id.getServices()}">
+                    <div th:each="service : ${tariff.tariffId.getServices()}">
                         <p th:text="${service.serviceType}"></p>
                     </div>
                 </td>

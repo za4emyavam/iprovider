@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cabinet</title>
+    <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+</head>
+<body>
+<div class="cabinet-header">
+    <h1>Welcome to your Cabinet</h1>
+</div>
+<div class="cabinet-container">
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
+    </div>
+    <div class="cabinet-content" th:fragment="cabinetContent">
+        <form action="#" th:action="@{/cabinet/services}" th:object="${changePasswordForm}" method="post">
+            <label for="oldPass">Old pass:</label>
+            <input type="text" th:field="*{oldPass}" id="oldPass"/>
+            <label for="newPass">New pass:</label>
+            <input type="text" th:field="*{newPass}" id="newPass"/>
+            <label for="oneMoreNewPass">Repeat new pass:</label>
+            <input type="text" th:field="*{oneMoreNewPass}" id="oneMoreNewPass"/>
+            <input type="submit" value="Submit!"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -11,5 +11,6 @@ public interface UserRepository {
     Optional<User> read(Long userId);
     Iterable<User> readAll(int page, int size);
     User update(User user);
+    User updatePass(User user);
     Integer getAmount();
 }

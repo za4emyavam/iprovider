@@ -1,4 +1,4 @@
-package com.example.iprovider.entities;
+package com.example.iprovider.entities.forms;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

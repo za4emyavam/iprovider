@@ -102,6 +102,16 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public User updatePass(User user) {
+        jdbcTemplate.update(
+                "update \"user\" u set pass=? where user_id=?",
+                user.getPassword(),
+                user.getUserId()
+        );
+        return user;
+    }
+
+    @Override
     public Integer getAmount() {
         return jdbcTemplate.query("select count(user_id) from \"user\"",
                 (rs, rowNum) -> rs.getInt(1))

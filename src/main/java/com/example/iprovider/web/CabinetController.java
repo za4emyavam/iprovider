@@ -5,11 +5,13 @@ import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.data.UserTariffsRepository;
 import com.example.iprovider.entities.Transaction;
 import com.example.iprovider.entities.User;
+import com.example.iprovider.entities.forms.ChangePasswordForm;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -24,13 +26,16 @@ public class CabinetController {
     private final UserTariffsRepository userTariffsRepository;
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public CabinetController(UserTariffsRepository userTariffsRepository,
                              TransactionRepository transactionRepository,
-                             UserRepository userRepository) {
+                             UserRepository userRepository,
+                             PasswordEncoder passwordEncoder) {
         this.userTariffsRepository = userTariffsRepository;
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping(value = "/cabinet", method = RequestMethod.GET)
@@ -89,5 +94,31 @@ public class CabinetController {
         model.addAttribute("size", size);
         model.addAttribute("maxPage", maxPage);
         return "cabinet/history";
+    }
+
+    @RequestMapping(value = "/cabinet/services", method = RequestMethod.GET)
+    public String getService(Model model) {
+        model.addAttribute("changePasswordForm", new ChangePasswordForm());
+        return "cabinet/services";
+    }
+
+    @RequestMapping(value = "/cabinet/services", method = RequestMethod.POST)
+    public String processNewPassword(@ModelAttribute @Valid ChangePasswordForm changePasswordForm,
+                                     Errors errors,
+                                     Authentication authentication) {
+        if (errors.hasErrors()) {
+            log.error("Validation error, {}", errors);
+            return "cabinet/services";
+        }
+        //TODO validation of this..
+        User user = (User) authentication.getPrincipal();
+        user = userRepository.findByUsername(user.getUsername());
+        if (passwordEncoder.matches(changePasswordForm.getOldPass(), user.getPassword())) {
+            if (changePasswordForm.getNewPass().equals(changePasswordForm.getOneMoreNewPass())) {
+                user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPass()));
+                userRepository.updatePass(user);
+            }
+        }
+        return "redirect:/cabinet";
     }
 }
