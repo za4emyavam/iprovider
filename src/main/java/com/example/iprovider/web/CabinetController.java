@@ -103,22 +103,26 @@ public class CabinetController {
     }
 
     @RequestMapping(value = "/cabinet/services", method = RequestMethod.POST)
-    public String processNewPassword(@ModelAttribute @Valid ChangePasswordForm changePasswordForm,
+    public String processNewPassword(Model model, @ModelAttribute @Valid ChangePasswordForm changePasswordForm,
                                      Errors errors,
                                      Authentication authentication) {
         if (errors.hasErrors()) {
             log.error("Validation error, {}", errors);
             return "cabinet/services";
         }
-        //TODO validation of this..
         User user = (User) authentication.getPrincipal();
         user = userRepository.findByUsername(user.getUsername());
         if (passwordEncoder.matches(changePasswordForm.getOldPass(), user.getPassword())) {
             if (changePasswordForm.getNewPass().equals(changePasswordForm.getOneMoreNewPass())) {
                 user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPass()));
                 userRepository.updatePass(user);
+                return "redirect:/cabinet";
+            } else {
+                model.addAttribute("msg", "newPassesNotEqual");
             }
+        } else {
+            model.addAttribute("msg", "oldPassError");
         }
-        return "redirect:/cabinet";
+        return "cabinet/services";
     }
 }

@@ -14,11 +14,30 @@
     <div class="cabinet-content" th:fragment="cabinetContent">
         <form action="#" th:action="@{/cabinet/services}" th:object="${changePasswordForm}" method="post">
             <label for="oldPass">Old pass:</label>
-            <input type="text" th:field="*{oldPass}" id="oldPass"/>
+            <input type="password" th:field="*{oldPass}" id="oldPass"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('oldPass')}" th:errors="*{oldPass}">
+                Old password validation error
+            </span>
+            <span th:if="${msg eq 'oldPassError'}">Wrong password!</span>
+            <br/><br/>
+
             <label for="newPass">New pass:</label>
-            <input type="text" th:field="*{newPass}" id="newPass"/>
+            <input type="password" th:field="*{newPass}" id="newPass"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('newPass')}" th:errors="*{newPass}">
+                New password validation error
+            </span><br/><br/>
+
             <label for="oneMoreNewPass">Repeat new pass:</label>
-            <input type="text" th:field="*{oneMoreNewPass}" id="oneMoreNewPass"/>
+            <input type="password" th:field="*{oneMoreNewPass}" id="oneMoreNewPass"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('oneMoreNewPass')}" th:errors="*{oneMoreNewPass}">
+                Passwords vary
+            </span>
+            <span th:if="${msg eq 'newPassesNotEqual'}">Password does not match</span>
+            <br/>
+
             <input type="submit" value="Submit!"/>
         </form>
     </div>
