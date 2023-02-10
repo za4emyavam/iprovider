@@ -3,8 +3,10 @@ package com.example.iprovider.web.admin;
 import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.data.UserTariffsRepository;
 import com.example.iprovider.entities.User;
+import com.example.iprovider.entities.forms.DeleteTariffFromUserForm;
 import com.example.iprovider.entities.forms.UserInfoForm;
 import com.example.iprovider.entities.UserTariffs;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,6 +57,7 @@ public class UsersController {
         model.addAttribute("user", user.get());
         model.addAttribute("userTariffs", userTariffsList);
         model.addAttribute("userInfoForm", new UserInfoForm());
+        model.addAttribute("deleteTariffFromUserForm", new DeleteTariffFromUserForm());
         return "admin/user_info";
     }
 
@@ -81,5 +84,15 @@ public class UsersController {
         }
         redirectAttributes.addAttribute("userId", userId);
         return "redirect:/admin/users/user_info";
+    }
+
+    @RequestMapping(value = "/admin/users/user_info/delete")
+    public String deleteTariffFromUser(RedirectAttributes redirectAttributes,
+                                       @Valid @ModelAttribute("deleteTariffFromUserForm") DeleteTariffFromUserForm deleteTariffFromUserForm) {
+        if (userTariffsRepository.deleteByUserIdTariffId(deleteTariffFromUserForm.getUserId(), deleteTariffFromUserForm.getTariffId())) {
+            redirectAttributes.addAttribute("userId", deleteTariffFromUserForm.getUserId());
+            return "redirect:/admin/users/user_info";
+        }
+        return "redirect:/admin/users";
     }
 }

@@ -61,6 +61,15 @@ public class CabinetController {
         return "cabinet/profile";
     }
 
+    @RequestMapping(value = "/cabinet/profile", method = RequestMethod.POST)
+    public String unsubscribeTariff(Model model, Authentication authentication, @RequestParam long tariffId) {
+        User user = (User) authentication.getPrincipal();
+
+        userTariffsRepository.deleteByUserIdTariffId(user.getUserId(), tariffId);
+
+        return "redirect:/cabinet";
+    }
+
     @RequestMapping(value = "/cabinet/refill", method = RequestMethod.POST)
     public String processRefill(@ModelAttribute @Valid Transaction transaction,
                                 Errors errors,
@@ -73,8 +82,7 @@ public class CabinetController {
         transaction.setBalanceId(userDetails.getUserId());
         transaction.setType(Transaction.TransactionType.REFILL);
         transaction.setTransactionStatus(Transaction.TransactionStatusType.SUCCESSFUL);
-        Transaction transaction1 = transactionRepository.create(transaction);
-        System.out.println(transaction1);
+        transactionRepository.create(transaction);
         return "redirect:/cabinet";
     }
 

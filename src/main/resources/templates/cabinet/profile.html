@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Cabinet</title>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
     <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
 </head>
 <body>
-<div class="cabinet-header">
-    <h1>Welcome to your Cabinet</h1>
-</div>
+
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="cabinet-container">
     <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
     </div>
@@ -24,23 +26,20 @@
         <p>Connected Tariffs:</p>
         <table class="tariffs-table">
             <tr>
-                <!--<th class="tariff-table-th">Id</th>-->
                 <th class="tariff-table-th">Name</th>
                 <th class="tariff-table-th">Description</th>
                 <th class="tariff-table-th">Cost</th>
                 <th class="tariff-table-th">Frequency of payment</th>
-                <!--<th class="tariff-table-th">Status</th>-->
                 <th class="tariff-table-th">Service</th>
                 <th class="tariff-table-th">Date Of Start</th>
                 <th class="tariff-table-th">Date Of last payment</th>
+                <th class="tariff-table-th"></th>
             </tr>
             <tr th:each="tariff : ${tariffs}">
-                <!--<td class="tariff-table-td" th:text="${tariff.tariffId}"/>-->
                 <td class="tariff-table-td" th:text="${tariff.tariffId.name}"/>
                 <td class="tariff-table-td" th:text="${tariff.tariffId.description}"/>
                 <td class="tariff-table-td" th:text="${tariff.tariffId.cost}"/>
                 <td class="tariff-table-td" th:text="${tariff.tariffId.frequencyOfPayment}"/>
-                <!--<td class="tariff-table-td" th:text="${tariff.status}"/>-->
                 <td class="tariff-table-td">
                     <div th:each="service : ${tariff.tariffId.getServices()}">
                         <p th:text="${service.serviceType}"></p>
@@ -48,11 +47,29 @@
                 </td>
                 <td class="tariff-table-td" th:text="${#dates.format(tariff.dateOfStart, 'dd-MM-yyyy')}"/>
                 <td class="tariff-table-td" th:text="${tariff.dateOfLastPayment}"/>
-
+                <td class="tariff-table-td">
+                    <form action="#" th:action="@{/cabinet/profile(tariffId=${tariff.tariffId.tariffId})}"
+                          id="unsubscribeTariffForm" method="post">
+                        <input type="submit" value="Unsubscribe tariff"/>
+                    </form>
+                </td>
             </tr>
         </table>
     </div>
 </div>
-<script th:src="@{/js/cabinet.js}"></script>
+<footer class="footer" th:insert="~{template.html :: footerFragment}"></footer>
+<script>
+    var form = document.getElementById("unsubscribeTariffForm");
+    form.addEventListener("submit", function (event) {
+        validateForm(event)
+    });
+
+    function validateForm(event) {
+        event.preventDefault();
+        if (confirm("Are you sure?")) {
+            form.submit();
+        }
+    }
+</script>
 </body>
 </html>

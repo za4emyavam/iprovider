@@ -3,9 +3,10 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Fastest</title>
-    <link rel="stylesheet" th:href="@{/styles.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <h1 class="page-name">List of tariffs</h1>
 <!--<div th:each="tariff : ${tariffs}">
     <span th:text="${tariff.name}">TARIFFS</span><br/>
@@ -37,7 +38,6 @@
             <a th:href="@{/tariffs/request(tariffId=${tariff.tariffId})}">request</a>
         </td>
     </tr>
-
 </table>
 <!--TODO-->
 <div th:if="${page != 1}">
@@ -46,5 +46,23 @@
 <div th:if="${page != maxPage}">
     <a th:href="@{/tariffs(page=${page+1},size=${size})}">Next</a>
 </div>
+<nav class="pagination-container">
+    <!--TODO pagination-->
+    <button th:if="${page != 1}" class="pagination-button" id="prev-button" aria-label="Previous page" title="Previous page">
+        <a th:href="@{/tariffs(page=${-1+page})}">&lt;</a>
+    </button>
+
+    <div id="pagination-numbers">
+
+    </div>
+
+    <button th:if="${page != maxPage}" class="pagination-button" id="next-button" aria-label="Next page" title="Next page">
+        <a th:href="@{/tariffs(page=${page+1})}">&gt;</a>
+    </button>
+</nav>
+<script>
+    var maxPage = [[${maxPage}]];
+</script>
+<script th:src="@{/js/pagination.js}"></script>
 </body>
 </html>

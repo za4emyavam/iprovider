@@ -4,27 +4,37 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Fastest</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
+    <!--<link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}"/>-->
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
-<div sec:authorize="hasRole('USER')">
-    <a th:href="@{/cabinet}" th:text="Cabinet"/>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="home-container">
+    <div class="home-sidebar" th:fragment="homeSideBar">
+        <ul>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}">Admin panel</a></li>
+            <li sec:authorize="hasRole('USER')"><a th:href="@{/cabinet}">Cabinet</a></li>
+            <li><a th:href="@{/tariffs}">Tariffs</a></li>
+        </ul>
+    </div>
+    <div class="home-content">
+        <h1 class="page-name">Main page</h1>
+        <p>Hello World!</p>
+        <div class="main-menu">
+            <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
+                <input type="submit" value="Logout"/>
+            </form>
+            <form sec:authorize="!isAuthenticated()" method="get" th:action="@{/login}">
+                <input type="submit" value="Login"/>
+            </form>
+            <a th:href="@{/tariffs}">
+                <button>Tariffs</button>
+            </a>
+        </div>
+    </div>
 </div>
-<div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" th:text="Admin"/></div>
-<div sec:authorize="hasRole('MAIN_ADMIN')">Text visible to main_admin.</div>
-
-<h1 class="page-name">Main page</h1>
-<p>Hello World!</p>
-<div class="main-menu">
-    <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
-        <input type="submit" value="Logout"/>
-    </form>
-    <form sec:authorize="!isAuthenticated()" method="get" th:action="@{/login}">
-        <input type="submit" value="Login"/>
-    </form>
-    <a th:href="@{/tariffs}">
-        <button>Tariffs</button>
-    </a>
-</div>
+<footer class="footer" th:insert="~{template.html :: footerFragment}"></footer>
 </body>
 </html>

@@ -52,6 +52,7 @@
                         <th class="tariff-table-th">Service</th>
                         <th class="tariff-table-th">Date Of Start</th>
                         <th class="tariff-table-th">Date Of last payment</th>
+                        <th class="tariff-table-th"></th>
                     </tr>
                     <tr th:each="tariff : ${userTariffs}">
                         <td class="tariff-table-td" th:text="${tariff.tariffId.tariffId}"/>
@@ -66,7 +67,15 @@
                         </td>
                         <td class="tariff-table-td" th:text="${#dates.format(tariff.dateOfStart, 'dd-MM-yyyy')}"/>
                         <td class="tariff-table-td" th:text="${tariff.dateOfLastPayment}"/>
-
+                        <td class="tariff-table-td">
+                            <form action="#"
+                                  th:action="@{/admin/users/user_info/delete}" th:object="${deleteTariffFromUserForm}"
+                                  method="post">
+                                <input type="hidden" th:value="${user.userId}" name="userId"/>
+                                <input type="hidden" th:value="${tariff.tariffId.tariffId}" name="tariffId"/>
+                                <input type="submit" value="Unsubscribe"/>
+                            </form>
+                        </td>
                     </tr>
                 </table>
             </div>

@@ -28,6 +28,14 @@ public class JdbcUserTariffsRepository implements UserTariffsRepository {
         );
     }
 
+    @Override
+    public boolean deleteByUserIdTariffId(Long userId, Long tariffId) {
+        return jdbcTemplate.update(
+                "delete from user_tariffs where user_id=? and tariff_id=?",
+                userId, tariffId
+        ) != 0;
+    }
+
     private UserTariffs mapRowToUserTariffs(ResultSet rs, int rowNum) throws SQLException {
         return new UserTariffs(
                 rs.getLong("user_tariffs_id"),

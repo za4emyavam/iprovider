@@ -3,11 +3,10 @@
 <head>
     <title>Cabinet</title>
     <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
-<div class="cabinet-header">
-    <h1>Welcome to your Cabinet</h1>
-</div>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="cabinet-container">
     <div class="cabinet-sidebar" th:fragment="cabinetSideBar">
         <ul>

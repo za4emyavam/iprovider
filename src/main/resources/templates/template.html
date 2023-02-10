@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <link rel="stylesheet" th:href="@{/css/shared.css}">
+</head>
+<body>
+<div th:fragment="headerFragment">
+  <div class="cabinet-header-content">
+    <a th:href="@{/}"><h1>IProvider "FASTEST"</h1></a>
+  </div>
+  <div class="cabinet-header-page">
+    <!--<h1>Welcome to your Cabinet</h1>-->
+  </div>
+  <div class="cabinet-header-languages">
+    <select name="language">
+      <option value="en">en</option>
+      <option value="ua">ua</option>
+    </select>
+    <!--<button>UA</button>
+    <button>EN</button>-->
+    <!--TODO buttons to switch language-->
+  </div>
+  <div class="cabinet-header-authorization">
+    <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
+      <input class="icon" type="image" th:src="@{/img/logout.png}" value="Logout"/>
+    </form>
+    <form sec:authorize="!isAuthenticated()" method="get" th:action="@{/login}">
+      <input class="icon" type="image" th:src="@{/img/login.png}" value="Login"/>
+    </form>
+  </div>
+</div>
+<div th:fragment="footerFragment">
+    <!-- footer content here -->
+</div>
+</body>
+</html>
