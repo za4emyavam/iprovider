@@ -11,7 +11,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class UserTariffs {
     private Long user_tariffs_id;
-    private final Long userId;
+    private final User userId;
     private final Tariff tariffId;
     private final Date dateOfStart;
     private final Date dateOfLastPayment;

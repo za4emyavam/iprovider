@@ -15,9 +15,12 @@ import java.util.List;
 public class JdbcUserTariffsRepository implements UserTariffsRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final JdbcUserRepository jdbcUserRepository;
 
-    public JdbcUserTariffsRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcUserTariffsRepository(JdbcTemplate jdbcTemplate,
+                                     JdbcUserRepository jdbcUserRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcUserRepository = jdbcUserRepository;
     }
 
     @Override
@@ -26,6 +29,31 @@ public class JdbcUserTariffsRepository implements UserTariffsRepository {
                         "where ut.user_id=?", this::mapRowToUserTariffs,
                 userId
         );
+    }
+
+    @Override
+    public Iterable<UserTariffs> readAll() {
+        return jdbcTemplate.query("select * from user_tariffs", this::mapRowToUserTariffs);
+    }
+
+    @Override
+    public Iterable<UserTariffs> readAll(int page, int size) {
+        int offset = (page - 1) * size;
+        return jdbcTemplate.query("select * from user_tariffs order by user_tariffs_id limit ? offset ?",
+                this::mapRowToUserTariffs, size, offset);
+    }
+
+    @Override
+    public Integer getAmount() {
+        return jdbcTemplate.query("select count(*) from user_tariffs",
+                (rs, rowNum) -> rs.getInt(1))
+                .get(0);
+    }
+
+    @Override
+    public Integer getAmountOfSubscribers() {
+        return jdbcTemplate.query("select count(distinct user_id) from user_tariffs",
+                (rs, rowNum) -> rs.getInt(1)).get(0);
     }
 
     @Override
@@ -39,7 +67,7 @@ public class JdbcUserTariffsRepository implements UserTariffsRepository {
     private UserTariffs mapRowToUserTariffs(ResultSet rs, int rowNum) throws SQLException {
         return new UserTariffs(
                 rs.getLong("user_tariffs_id"),
-                rs.getLong("user_id"),
+                jdbcUserRepository.read(rs.getLong("user_id")).get(),
                 tariffById(rs.getLong("tariff_id")),
                 rs.getDate("date_of_start"),
                 rs.getDate("date_of_last_payment")

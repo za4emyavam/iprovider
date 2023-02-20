@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+
+    <div class="admin-content" th:fragment="adminContent">
+        <h1>Statistics</h1>
+        <p>Most popular tariff is
+            <span style="font-weight:bold" th:text="${firstInRating.key.name}"/> has
+            <span style="font-weight:bold" th:text="${firstInRating.value}"/> current subscribers.
+            <a th:href="@{/admin/statistics/rating}">Click to see more detailed</a>
+        </p>
+
+        <div th:if="${lastCheck.isEmpty()}">
+          <p>There is no checks yet.</p>
+        </div>
+        <div th:if="${lastCheck.isPresent()}">
+          <p>The last check took money from <span style="font-weight: bold" th:text="${lastCheck.get().users}"/>
+              subscribers on amount of <span style="font-weight: bold" th:text="${lastCheck.get().amount}"/>.
+              <a th:href="@{/admin/statistics/cheks}">Click to see more detailed.</a></p>
+        </div>
+        <p>
+            There are currently <span style="font-weight: bold" th:text="${amountOfUsers}"></span> registered users.
+            Of these, <span style="font-weight: bold" th:text="${amountOfSubscribers}"></span> users are subscribed to the tariffs.
+            <a th:href="@{/admin/statistics/users}">Click to see more detailed.</a>
+        </p>
+    </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>

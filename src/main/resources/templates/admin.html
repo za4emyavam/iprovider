@@ -4,24 +4,25 @@
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
-<div class="admin-header">
-    <h1>Welcome to your admin page</h1>
-</div>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="admin-container">
     <div class="admin-sidebar" th:fragment="adminSideBar">
         <ul>
-            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/tariffs}">Tariffs</a></li>
-            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/check_payments}">Check payments</a></li>
-            <li><a th:href="@{/admin/requests}">Requests</a></li>
-            <li><a th:href="@{/admin/users}">Users</a></li>
-            <li><a th:href="@{/admin/services}">Services</a></li>
+            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/tariffs}" th:text="#{admin.sidebar.tariffs}">Tariffs</a></li>
+            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/check_payments}" th:text="#{admin.sidebar.checks}">Check payments</a></li>
+            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/statistics}" th:text="#{admin.sidebar.stat}">Statistics</a></li>
+            <li><a th:href="@{/admin/requests}" th:text="#{admin.sidebar.requests}">Requests</a></li>
+            <li><a th:href="@{/admin/users}" th:text="#{admin.sidebar.users}">Users</a></li>
+            <li><a th:href="@{/admin/services}" th:text="#{admin.sidebar.services}">Services</a></li>
         </ul>
     </div>
     <div class="admin-content" th:fragment="adminContent">
 
     </div>
 </div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>
 </html>

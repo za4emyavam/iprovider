@@ -80,11 +80,26 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public Iterable<User> readAll() {
+        return jdbcTemplate.query("select * from \"user\"", this::mapRowToUserWithoutPass);
+    }
+
+    @Override
     public Iterable<User> readAll(int page, int size) {
         int offset = (page - 1) * size;
         return jdbcTemplate.query(
                 "select * from \"user\" order by user_id limit ? offset ?",
                 this::mapRowToUserWithoutPass, size, offset);
+    }
+
+    @Override
+    public Iterable<User> readAllHasTariffs() {
+        return jdbcTemplate.query(
+                "SELECT DISTINCT u.user_id, u.email, u.registration_date, u.user_role, " +
+                        "u.user_status, u.user_balance, u.firstname, u.surname, u.telephone_number " +
+                "FROM \"user\" u " +
+                "INNER JOIN user_tariffs ut ON u.user_id = ut.user_id ORDER BY user_id",
+                this::mapRowToUserWithoutPass);
     }
 
     @Override

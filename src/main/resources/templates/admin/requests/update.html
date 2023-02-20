@@ -3,11 +3,10 @@
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
-<div class="admin-header">
-    <h1>Welcome to your admin page</h1>
-</div>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="admin-container">
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
     <div class="admin-content" th:fragment="adminContent">
@@ -38,5 +37,6 @@
         </form>
     </div>
 </div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>
 </html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+
+    <div class="admin-content" th:fragment="adminContent">
+        <h1>Users stat</h1>
+        <div class="sort-table">
+            <form th:action="@{/admin/statistics/users}" method="get">
+                <label for="address">Address: </label>
+                <input type="text" id="address">
+                <select>
+                    <option>TV</option>
+                </select>
+                <label for="dateOfStartPeriod">Date of start: </label>
+                <input type="date" id="dateOfStartPeriod"/>
+                <label for="dateOfEndPeriod">Date of end period: </label>
+                <input type="date" id="dateOfEndPeriod"/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+        <table>
+            <tr>
+                <th>User Id</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>More</th>
+            </tr>
+            <tr th:each="user : ${userList}">
+                <td th:text="${user.userId}">userId</td>
+                <td th:text="${user.username}">username</td>
+                <td class="user-table-td" th:text="${user.userRole}">role</td>
+                <td class="user-table-td" th:text="${user.userStatus}">status</td>
+                <td class="user-table-td-td">
+                    <!--<form method="get" th:action="@{/admin/tariffs/update(tariffId=${tariff.tariffId})}" id="updateTariff">
+                      <input type="submit" id="update" name="update" value="Update"/>
+                    </form>-->
+                    <a th:href="@{/admin/users/user_info(userId=${user.userId})}">more info</a>
+                </td>
+            </tr>
+        </table>
+        <p>Amount of users: <span style="font-weight: bold" th:text="${amount}"></span></p>
+    </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+<script>
+    today = new Date().toISOString().split("T")[0];
+    document.getElementById("dateOfEndPeriod").setAttribute("max", today);
+    document.getElementById("dateOfStartPeriod").setAttribute("max", today);
+</script>
+</body>
+</html>

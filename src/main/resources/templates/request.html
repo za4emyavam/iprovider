@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <h1>Something</h1>
 <form action="#" th:object="${connectionRequest}"
       th:action="@{/tariffs/request(tariffId=${tariffId})}" method="post">
@@ -26,5 +28,6 @@
             </span><br/>
     <input type="submit" value="Create request"/>
 </form>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>
 </html>

@@ -4,9 +4,11 @@
 <head>
     <title>Taco Cloud</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 
 <body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <h1>Register</h1>
 
 <form method="post" th:action="@{/register}" id="registerForm">
@@ -30,5 +32,6 @@
 
     <input type="submit" value="Register"/>
 </form>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>
 </html>

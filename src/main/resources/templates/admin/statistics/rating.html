@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="admin-container">
+    <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+
+    <div class="admin-content" th:fragment="adminContent">
+        <h1>Rating</h1>
+        <table>
+          <tr th:each="instance : ${rating}">
+            <td th:text="${instance.key.name}">keyvalue</td>
+            <td th:text="${instance.value}">num</td>
+          </tr>
+        </table>
+    </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>

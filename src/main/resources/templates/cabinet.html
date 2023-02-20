@@ -10,11 +10,11 @@
 <div class="cabinet-container">
     <div class="cabinet-sidebar" th:fragment="cabinetSideBar">
         <ul>
-            <li><a th:href="@{/cabinet/profile}">Profile</a></li>
-            <li><a th:href="@{/cabinet/history}">History</a></li>
-            <li><a th:href="@{/cabinet/services}">Services</a></li>
-            <li><a th:href="@{/cabinet/requests}">Requests</a></li>
-            <li><a th:href="@{/cabinet/refill}">Top up balance</a></li>
+            <li><a th:href="@{/cabinet/profile}" th:text="#{cabinet.sidebar.profile}">Profile</a></li>
+            <li><a th:href="@{/cabinet/history}" th:text="#{cabinet.sidebar.history}">History</a></li>
+            <li><a th:href="@{/cabinet/services}" th:text="#{cabinet.sidebar.services}">Services</a></li>
+            <li><a th:href="@{/cabinet/requests}" th:text="#{cabinet.sidebar.requests}">Requests</a></li>
+            <li><a th:href="@{/cabinet/refill}" th:text="#{cabinet.sidebar.topup}">Top up balance</a></li>
         </ul>
     </div>
     <div class="cabinet-content" th:fragment="cabinetContent">
@@ -59,6 +59,7 @@
         </table>
     </div>
 </div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
 <script th:src="@{/js/cabinet.js}"></script>
 </body>
 </html>

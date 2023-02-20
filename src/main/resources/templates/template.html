@@ -14,9 +14,9 @@
     <!--<h1>Welcome to your Cabinet</h1>-->
   </div>
   <div class="cabinet-header-languages">
-    <select name="language">
-      <option value="en">en</option>
-      <option value="ua">ua</option>
+    <select id="locales" name="language">
+      <option value="en">EN</option>
+      <option value="ua">UA</option>
     </select>
     <!--<button>UA</button>
     <button>EN</button>-->
@@ -31,8 +31,23 @@
     </form>
   </div>
 </div>
+<div th:fragment="homeSideBar">
+  <ul>
+    <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" th:text="#{home.sidebar.admin}">Admin panel</a></li>
+    <li sec:authorize="hasRole('USER')"><a th:href="@{/cabinet}" th:text="#{home.sidebar.cabinet}">Cabinet</a></li>
+    <li><a th:href="@{/tariffs}" th:text="#{home.sidebar.tariffs}">Tariffs</a></li>
+  </ul>
+</div>
 <div th:fragment="footerFragment">
     <!-- footer content here -->
+</div>
+<div th:fragment="headerScriptFragment">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+  </script>
+  <script>
+    var currentLocale = "[[${#locale}]]";
+  </script>
+  <script type="text/javascript" th:src="@{/js/locale_switcher.js}"></script>
 </div>
 </body>
 </html>
