@@ -2,6 +2,7 @@ package com.example.iprovider.data.jdbc;
 
 import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.entities.User;
+import com.example.iprovider.entities.forms.SortUserStatisticsForm;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -93,13 +94,16 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public Iterable<User> readAllHasTariffs() {
-        return jdbcTemplate.query(
-                "SELECT DISTINCT u.user_id, u.email, u.registration_date, u.user_role, " +
-                        "u.user_status, u.user_balance, u.firstname, u.surname, u.telephone_number " +
-                "FROM \"user\" u " +
-                "INNER JOIN user_tariffs ut ON u.user_id = ut.user_id ORDER BY user_id",
-                this::mapRowToUserWithoutPass);
+    public Iterable<User> readAllHasTariffsWithSorting(SortUserStatisticsForm sortUserStatisticsForm) {
+        if (sortUserStatisticsForm.getTariff() != 0 && !sortUserStatisticsForm.getAddress().isEmpty()) {
+            return readAllWithSortByAddressAndTariff(sortUserStatisticsForm);
+        } else if (sortUserStatisticsForm.getTariff() != 0 && sortUserStatisticsForm.getAddress().isEmpty()) {
+            return readAllWithSortByTariff(sortUserStatisticsForm);
+        } else if (sortUserStatisticsForm.getTariff() == 0 && !sortUserStatisticsForm.getAddress().isEmpty()) {
+            return readAllWithSortByAddress(sortUserStatisticsForm);
+        } else {
+            return readAll(sortUserStatisticsForm);
+        }
     }
 
     @Override
@@ -129,7 +133,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public Integer getAmount() {
         return jdbcTemplate.query("select count(user_id) from \"user\"",
-                (rs, rowNum) -> rs.getInt(1))
+                        (rs, rowNum) -> rs.getInt(1))
                 .get(0);
     }
 
@@ -160,5 +164,52 @@ public class JdbcUserRepository implements UserRepository {
                 row.getString("surname"),
                 row.getString("telephone_number")
         );
+    }
+
+    private Iterable<User> readAllWithSortByAddress(SortUserStatisticsForm sortUserStatisticsForm) {
+        return jdbcTemplate.query("select distinct u.* from \"user\" u " +
+                "inner join user_tariffs ut on u.user_id = ut.user_id " +
+                "inner join connection_request cr on u.user_id = cr.subscriber " +
+                "where ut.date_of_start >= ? " +
+                "AND ut.date_of_start <= ? " +
+                "AND cr.address LIKE ?",
+                this::mapRowToUserWithoutPass,
+                sortUserStatisticsForm.getDateOfStartPeriod(), sortUserStatisticsForm.getDateOfEndPeriod(),
+                "%" + sortUserStatisticsForm.getAddress() + "%");
+    }
+
+    private Iterable<User> readAllWithSortByTariff(SortUserStatisticsForm sortUserStatisticsForm) {
+        return jdbcTemplate.query("select distinct u.* from \"user\" u " +
+                        "inner join user_tariffs ut on u.user_id = ut.user_id " +
+                        "inner join connection_request cr on u.user_id = cr.subscriber " +
+                        "where ut.date_of_start >= ? " +
+                        "AND ut.date_of_start <= ? " +
+                        "AND ut.tariff_id = ?",
+                this::mapRowToUserWithoutPass,
+                sortUserStatisticsForm.getDateOfStartPeriod(), sortUserStatisticsForm.getDateOfEndPeriod(),
+                sortUserStatisticsForm.getTariff());
+    }
+
+    private Iterable<User> readAllWithSortByAddressAndTariff(SortUserStatisticsForm sortUserStatisticsForm) {
+        return jdbcTemplate.query("select distinct u.* from \"user\" u " +
+                        "inner join user_tariffs ut on u.user_id = ut.user_id " +
+                        "inner join connection_request cr on u.user_id = cr.subscriber " +
+                        "where ut.date_of_start >= ? " +
+                        "AND ut.date_of_start <= ? " +
+                        "AND cr.address LIKE ? " +
+                        "AND ut.tariff_id = ?",
+                this::mapRowToUserWithoutPass,
+                sortUserStatisticsForm.getDateOfStartPeriod(), sortUserStatisticsForm.getDateOfEndPeriod(),
+                "%" + sortUserStatisticsForm.getAddress() + "%", sortUserStatisticsForm.getTariff());
+    }
+
+    private Iterable<User> readAll(SortUserStatisticsForm sortUserStatisticsForm) {
+        return jdbcTemplate.query("select distinct u.* from \"user\" u " +
+                        "inner join user_tariffs ut on u.user_id = ut.user_id " +
+                        "inner join connection_request cr on u.user_id = cr.subscriber " +
+                        "where ut.date_of_start >= ? " +
+                        "AND ut.date_of_start <= ? ",
+                this::mapRowToUserWithoutPass,
+                sortUserStatisticsForm.getDateOfStartPeriod(), sortUserStatisticsForm.getDateOfEndPeriod());
     }
 }

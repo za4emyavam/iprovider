@@ -7,6 +7,7 @@ import com.example.iprovider.data.UserTariffsRepository;
 import com.example.iprovider.entities.Tariff;
 import com.example.iprovider.entities.User;
 import com.example.iprovider.entities.UserTariffs;
+import com.example.iprovider.entities.forms.SortUserStatisticsForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,10 +52,14 @@ public class StatisticsController {
     }
 
     @RequestMapping(value = "/admin/statistics/users", method = RequestMethod.GET)
-    public String getUsersPage(Model model,
+    public String getUsersPageWithSort(Model model,
                                @RequestParam(defaultValue = "1") int page,
-                               @RequestParam(defaultValue = "5") int size) {
-        Iterable<User> users = userRepository.readAllHasTariffs();
+                               @RequestParam(defaultValue = "5") int size,
+                               SortUserStatisticsForm sortUserStatisticsForm) {
+        sortUserStatisticsForm.fixValues();
+        Iterable<User> users = userRepository.readAllHasTariffsWithSorting(sortUserStatisticsForm);
+        model.addAttribute("sortUserStatisticsForm", sortUserStatisticsForm);
+        model.addAttribute("tariffs", tariffRepository.readAll());
         model.addAttribute("userList", users);
         model.addAttribute("amount", StreamSupport.stream(users.spliterator(), false).count());
         return "admin/statistics/users";
