@@ -118,6 +118,14 @@ public class JdbcTariffRepository implements TariffRepository {
         ) == 1;
     }
 
+    @Override
+    public Iterable<Tariff> readAllByService(Long serviceId) {
+        return jdbcTemplate.query("select t.* from tariff t, tariff_services ts " +
+                        "where ts.services_id=? and t.tariff_id = ts.tariff_id",
+                this::mapToRowTariff,
+                serviceId);
+    }
+
     private Tariff mapToRowTariff(ResultSet row, int rowNum) throws SQLException {
         return new Tariff(
                 row.getLong("tariff_id"),

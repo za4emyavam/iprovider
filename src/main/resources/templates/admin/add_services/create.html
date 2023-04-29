@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+  <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="admin-container">
+  <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+  <div class="admin-content" th:fragment="adminContent">
+    <form action="#" th:object="${addService}" th:action="@{/admin/add_services/create}" method="post">
+
+      <label for="name">Name:</label>
+      <input type="text" th:field="*{name}" name="name" id="name"/>
+      <span class="validationError"
+            th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                Name validation error
+            </span><br/>
+      <label for="desc">Description:</label>
+      <input type="text" th:field="*{description}" name="desc" id="desc"/>
+      <span class="validationError"
+            th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                Description validation error
+            </span><br/>
+      <label for="cost">Cost:</label>
+      <input type="number" th:field="*{cost}" name="cost" id="cost"/>
+      <span class="validationError"
+            th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}">
+                Cost validation error
+            </span><br/>
+      <input type="submit" value="Add additional service"/>
+    </form>
+  </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>

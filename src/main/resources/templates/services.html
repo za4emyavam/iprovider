@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fastest</title>
+    <link rel="stylesheet" th:href="@{/css/tariffs.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="tariff-container">
+    <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
+    <div class="tariff-content">
+        <h1 class="page-name">List of services</h1>
+        <table class="tariffs-table">
+            <tr>
+                <th class="tariff-table-th">Id</th>
+                <th class="tariff-table-th">Name</th>
+                <th class="tariff-table-th">Description</th>
+                <th class="tariff-table-th">Cost</th>
+            </tr>
+            <tr th:each="service : ${addServices}">
+                <td class="tariff-table-td" th:text="${service.additionalServiceId}"/>
+                <td class="tariff-table-td" th:text="${service.name}"/>
+                <td class="tariff-table-td" th:text="${service.description}"/>
+                <td class="tariff-table-td" th:text="${service.cost}"/>
+            </tr>
+        </table>
+
+    </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>

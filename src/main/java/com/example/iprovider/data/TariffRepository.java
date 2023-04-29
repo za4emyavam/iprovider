@@ -12,4 +12,5 @@ public interface TariffRepository {
     Optional<Tariff> readByID(Long tariffId);
     Tariff update(Tariff tariff);
     boolean delete(Long tariffId);
+    Iterable<Tariff> readAllByService(Long serviceId);
 }

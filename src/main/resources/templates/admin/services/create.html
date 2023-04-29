@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+  <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="admin-container">
+  <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
+  <div class="admin-content" th:fragment="adminContent">
+    <form action="#" th:object="${service}" th:action="@{/admin/services/create}" method="post">
+      <!--id="creatingTariffForm"-->
+      <label for="name">Name:</label>
+      <input type="text" th:field="*{serviceType}" name="name" id="name"/>
+      <span class="validationError"
+            th:if="${#fields.hasErrors('serviceType')}" th:errors="*{serviceType}">
+                Name validation error
+            </span><br/>
+      <input type="submit" value="Add service"/>
+    </form>
+  </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>

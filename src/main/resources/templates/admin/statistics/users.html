@@ -53,7 +53,18 @@
     </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
+<script th:src="@{/js/moment.js}"></script>
 <script>
+    var dateStr = "[[${sortUserStatisticsForm.dateOfStartPeriod}]]";
+    var dateObj = moment(dateStr, "ddd MMM DD HH:mm:ss zzz YYYY");
+    var formattedDate = dateObj.format("YYYY-MM-DD");
+    document.getElementById("dateOfStartPeriod").value = formattedDate;
+
+    dateStr = "[[${sortUserStatisticsForm.dateOfEndPeriod}]]";
+    dateObj = moment(dateStr, "ddd MMM DD HH:mm:ss zzz YYYY");
+    formattedDate = dateObj.format("YYYY-MM-DD");
+    document.getElementById("dateOfEndPeriod").value = formattedDate;
+
     today = new Date().toISOString().split("T")[0];
     document.getElementById("dateOfEndPeriod").setAttribute("max", today);
     document.getElementById("dateOfStartPeriod").setAttribute("max", today);

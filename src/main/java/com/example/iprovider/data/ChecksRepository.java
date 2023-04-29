@@ -8,6 +8,5 @@ public interface ChecksRepository {
     Iterable<Checks> readAll(int page, int size);
     Integer getAmount();
     Checks create(Long adminId);
-
     Optional<Checks> readLast();
 }
