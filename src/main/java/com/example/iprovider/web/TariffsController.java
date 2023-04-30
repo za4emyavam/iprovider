@@ -1,10 +1,11 @@
 package com.example.iprovider.web;
 
+import com.example.iprovider.data.AdditionalServiceRepository;
 import com.example.iprovider.data.ConnectionRequestRepository;
+import com.example.iprovider.data.RequestAdditionalServicesRepository;
 import com.example.iprovider.data.TariffRepository;
-import com.example.iprovider.entities.ConnectionRequest;
-import com.example.iprovider.entities.Tariff;
-import com.example.iprovider.entities.User;
+import com.example.iprovider.entities.*;
+import com.example.iprovider.entities.forms.ConnectionRequestForm;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,18 @@ import java.util.Optional;
 public class TariffsController {
     private final TariffRepository tariffRepository;
     private final ConnectionRequestRepository connectionRequestRepository;
+    private final AdditionalServiceRepository additionalServiceRepository;
+    private final RequestAdditionalServicesRepository requestAdditionalServicesRepository;
 
     @Autowired
-    public TariffsController(TariffRepository tariffRepository, ConnectionRequestRepository connectionRequestRepository) {
+    public TariffsController(TariffRepository tariffRepository,
+                             ConnectionRequestRepository connectionRequestRepository,
+                             AdditionalServiceRepository additionalServiceRepository,
+                             RequestAdditionalServicesRepository requestAdditionalServicesRepository) {
         this.tariffRepository = tariffRepository;
         this.connectionRequestRepository = connectionRequestRepository;
+        this.additionalServiceRepository = additionalServiceRepository;
+        this.requestAdditionalServicesRepository = requestAdditionalServicesRepository;
     }
 
     @RequestMapping(value = "/tariffs", method = RequestMethod.GET)
@@ -51,15 +59,17 @@ public class TariffsController {
         if (tariff.isEmpty()) {
             return "redirect:/tariffs";
         }
-        ConnectionRequest connectionRequest = new ConnectionRequest();
+//        ConnectionRequest connectionRequest = new ConnectionRequest();
         //connectionRequest.setTariff(tariff.get());
+        ConnectionRequestForm connectionRequest = new ConnectionRequestForm();
         model.addAttribute("connectionRequest", connectionRequest);
         model.addAttribute("tariffId", tariffId);
+        model.addAttribute("additionalServices", additionalServiceRepository.readAll());
         return "request";
     }
 
     @RequestMapping(value = "/tariffs/request", method = RequestMethod.POST)
-    public String processRequest(@ModelAttribute @Valid ConnectionRequest connectionRequest,
+    public String processRequest(@ModelAttribute @Valid ConnectionRequestForm connectionRequest,
                                  @RequestParam long tariffId, Errors errors,
                                  Authentication authentication) {
         if(errors.hasErrors()) {
@@ -70,12 +80,33 @@ public class TariffsController {
         if (tariff.isEmpty()) {
             return "redirect:/tariffs";
         }
+
+        ConnectionRequest conReq = new ConnectionRequest();
+
         User userDetails = (User) authentication.getPrincipal();
-        connectionRequest.setSubscriber(userDetails.getUserId());
-        connectionRequest.setTariff(tariff.get());
-        connectionRequest.setDateOfChange(new Date());
-        connectionRequest.setStatus(ConnectionRequest.RequestStatusType.IN_PROCESSING);
-        connectionRequestRepository.create(connectionRequest);
+        conReq.setSubscriber(userDetails.getUserId());
+
+        conReq.setTariff(tariff.get());
+        conReq.setDateOfChange(new Date());
+        conReq.setStatus(ConnectionRequest.RequestStatusType.IN_PROCESSING);
+        conReq.setAddress(connectionRequest.getAddress());
+        conReq.setCity(connectionRequest.getCity());
+        connectionRequestRepository.create(conReq);
+        //TODO
+        for (AdditionalService service :
+                connectionRequest.getAdditionalServiceList()) {
+            RequestAdditionalServices temp = new RequestAdditionalServices(
+                    conReq, service, RequestAdditionalServices.Status.expected
+            );
+            System.out.println(temp);
+            requestAdditionalServicesRepository.create(temp);
+        }
         return "redirect:/tariffs";
+    }
+
+    @RequestMapping(value = "/services", method = RequestMethod.GET)
+    public String additionalServicesPage(Model model) {
+        model.addAttribute("additionalServices", additionalServiceRepository.readAll());
+        return "services";
     }
 }

@@ -1,0 +1,29 @@
+.request-container {
+    display: flex;
+}
+
+.home-sidebar {
+    flex: 1;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.home-sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.home-sidebar li {
+    margin: 10px 0;
+}
+
+.home-sidebar a {
+    color: #333;
+    text-decoration: none;
+}
+
+.request-form {
+    flex: 3;
+    padding: 20px;
+}

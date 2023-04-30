@@ -62,7 +62,7 @@ public class CabinetController {
     }
 
     @RequestMapping(value = "/cabinet/profile", method = RequestMethod.POST)
-    public String unsubscribeTariff(Model model, Authentication authentication, @RequestParam long tariffId) {
+    public String unsubscribeTariff(Authentication authentication, @RequestParam long tariffId) {
         User user = (User) authentication.getPrincipal();
 
         userTariffsRepository.deleteByUserIdTariffId(user.getUserId(), tariffId);
@@ -132,5 +132,10 @@ public class CabinetController {
             model.addAttribute("msg", "oldPassError");
         }
         return "cabinet/services";
+    }
+
+    @RequestMapping(value = "/cabinet/requests", method = RequestMethod.GET)
+    public String getRequests(Model model) {
+        return "cabinet/requests";
     }
 }

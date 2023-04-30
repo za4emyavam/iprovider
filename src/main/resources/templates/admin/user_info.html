@@ -76,6 +76,23 @@
                             </form>
                         </td>
                     </tr>
+                </table><br/>
+            </div>
+            <div th:if="${!additionalServices.isEmpty()}">
+                <p>Additional services:</p>
+                <table class="tariffs-table">
+                    <tr>
+                        <th class="tariff-table-th">Connection Request Id</th>
+                        <th class="tariff-table-th">Name</th>
+                        <th class="tariff-table-th">Cost</th>
+                        <th class="tariff-table-th">Status</th>
+                    </tr>
+                    <tr th:each="service : ${additionalServices}">
+                        <td class="tariff-table-td" th:text="${service.requestId.connectionRequestId}"/>
+                        <td class="tariff-table-td" th:text="${service.serviceId.name}"/>
+                        <td class="tariff-table-td" th:text="${service.serviceId.cost}"/>
+                        <td class="tariff-table-td" th:text="${service.status}"/>
+                    </tr>
                 </table>
             </div>
 

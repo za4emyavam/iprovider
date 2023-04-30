@@ -23,8 +23,13 @@
             <p>Date of request: <span th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}"/> </p>
             <p>Request status: <span th:text="${connectionRequest.status}"/></p>
             <p>Tariff: <span th:text="${connectionRequest.tariff.name}"/></p>
+            <div th:if="${!additionalServices.isEmpty()}">
+                <p>Additional services: </p>
+                <ul th:each="service : ${additionalServices}">
+                    <li th:text="${service.serviceId.name}"></li>
+                </ul>
 
-
+            </div>
         </div>
         <form action="#"
               th:action="@{/admin/requests/update(requestId=${connectionRequest.connectionRequestId})}" method="post">

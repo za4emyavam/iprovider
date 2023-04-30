@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cabinet</title>
+    <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="cabinet-container">
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
+    </div>
+    <div class="cabinet-content" th:fragment="cabinetContent">
+        <h1>Requests</h1>
+
+    </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>

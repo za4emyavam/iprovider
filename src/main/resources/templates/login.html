@@ -2,31 +2,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>TacoCloud</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
-<h1>Login</h1>
+<div class="login-container">
+    <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
+    <div class="login-form">
+        <h1 class="page-name">Login</h1>
 
-<div th:if="${loginError}">
-    Unable to login. Check your username and password.
+        <div th:if="${loginError}">
+            Unable to login. Check your username and password.
+        </div>
+
+        <p>New here? Click
+            <a th:href="@{/register}">here</a> to register.
+        </p>
+
+        <form method="post" th:action="@{/login}" id="loginForm" class="ui-form">
+            <div class="form-row">
+                <label for="username">Username: </label>
+                <input type="text" name="username" id="username" required autocomplete="off"/><br/>
+            </div>
+            <div class="form-row">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required autocomplete="off"/>
+            </div>
+            <p><input class="submit" type="submit" value="Login"/></p>
+        </form>
+    </div>
 </div>
 
-<p>New here? Click
-    <a th:href="@{/register}">here</a> to register.
-</p>
-
-<form method="post" th:action="@{/login}" id="loginForm">
-    <label for="username">Username: </label>
-    <input type="text" name="username" id="username"/><br/>
-
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password"/><br/>
-
-    <input class="submit" type="submit" value="Login"/>
-</form>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>
 </html>

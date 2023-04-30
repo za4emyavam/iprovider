@@ -1,7 +1,9 @@
 package com.example.iprovider.web.admin;
 
+import com.example.iprovider.data.RequestAdditionalServicesRepository;
 import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.data.UserTariffsRepository;
+import com.example.iprovider.entities.RequestAdditionalServices;
 import com.example.iprovider.entities.User;
 import com.example.iprovider.entities.forms.DeleteTariffFromUserForm;
 import com.example.iprovider.entities.forms.UserInfoForm;
@@ -23,10 +25,14 @@ import java.util.Optional;
 public class UsersController {
     private final UserRepository userRepository;
     private final UserTariffsRepository userTariffsRepository;
+    private final RequestAdditionalServicesRepository requestAdditionalServicesRepository;
 
-    public UsersController(UserRepository userRepository, UserTariffsRepository userTariffsRepository) {
+    public UsersController(UserRepository userRepository,
+                           UserTariffsRepository userTariffsRepository,
+                           RequestAdditionalServicesRepository requestAdditionalServicesRepository) {
         this.userRepository = userRepository;
         this.userTariffsRepository = userTariffsRepository;
+        this.requestAdditionalServicesRepository = requestAdditionalServicesRepository;
     }
 
     @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
@@ -51,11 +57,14 @@ public class UsersController {
         if (user.isEmpty()) {
             return "redirect:/admin/users";
         }
-        Iterable<UserTariffs> userTariffs = userTariffsRepository.readById(userId);
         List<UserTariffs> userTariffsList = new ArrayList<>();
-        userTariffs.forEach(userTariffsList::add);
+        userTariffsRepository.readById(userId).forEach(userTariffsList::add);
+
+        List<RequestAdditionalServices> requestAdditionalServices = new ArrayList<>();
+        requestAdditionalServicesRepository.readBySubscriberId(userId).forEach(requestAdditionalServices::add);
         model.addAttribute("user", user.get());
         model.addAttribute("userTariffs", userTariffsList);
+        model.addAttribute("additionalServices", requestAdditionalServices);
         model.addAttribute("userInfoForm", new UserInfoForm());
         model.addAttribute("deleteTariffFromUserForm", new DeleteTariffFromUserForm());
         return "admin/user_info";
