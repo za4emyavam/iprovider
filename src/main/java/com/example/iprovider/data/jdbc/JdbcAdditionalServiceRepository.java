@@ -44,9 +44,9 @@ public class JdbcAdditionalServiceRepository implements AdditionalServiceReposit
     @Override
     public AdditionalService create(AdditionalService additionalService) {
         PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(
-                "insert into additional_service (name, description, cost) " +
-                        "VALUES (?, ?, ?)",
-                Types.VARCHAR, Types.VARCHAR, Types.NUMERIC
+                "insert into additional_service (name, description, cost, status) " +
+                        "VALUES (?, ?, ?, ?::additional_service_status_type)",
+                Types.VARCHAR, Types.VARCHAR, Types.NUMERIC, Types.VARCHAR
         );
 
         pscf.setReturnGeneratedKeys(true);
@@ -55,7 +55,8 @@ public class JdbcAdditionalServiceRepository implements AdditionalServiceReposit
                 Arrays.asList(
                         additionalService.getName(),
                         additionalService.getDescription(),
-                        additionalService.getCost()
+                        additionalService.getCost(),
+                        additionalService.getStatus().name().toLowerCase()
                 )
         );
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -69,11 +70,13 @@ public class JdbcAdditionalServiceRepository implements AdditionalServiceReposit
     @Override
     public AdditionalService update(AdditionalService additionalService) {
         jdbcTemplate.update(
-                "update additional_service set name=?, description=?, cost=? " +
+                "update additional_service set name=?, description=?, cost=?," +
+                        "status=?::additional_service_status_type " +
                         "where additional_service_id=?",
                 additionalService.getName(),
                 additionalService.getDescription(),
                 additionalService.getCost(),
+                additionalService.getStatus().name().toLowerCase(),
                 additionalService.getAdditionalServiceId()
         );
         return additionalService;
@@ -92,7 +95,8 @@ public class JdbcAdditionalServiceRepository implements AdditionalServiceReposit
                 row.getLong("additional_service_id"),
                 row.getString("name"),
                 row.getString("description"),
-                row.getDouble("cost")
+                row.getDouble("cost"),
+                AdditionalService.Status.valueOf(row.getString("status").toUpperCase())
         );
     }
 }

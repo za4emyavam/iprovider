@@ -12,7 +12,25 @@
     </div>
     <div class="cabinet-content" th:fragment="cabinetContent">
         <h1>Requests</h1>
-
+        <table class="request-table">
+            <tr>
+                <th class="request-table-th">Tariff</th>
+                <th class="request-table-th">City</th>
+                <th class="request-table-th">Address</th>
+                <th class="request-table-th">Date</th>
+                <th class="request-table-th">Status</th>
+            </tr>
+            <tr th:each="request : ${connectionRequest}">
+                <td class="request-table-td" th:text="${request.tariff.name}"/>
+                <td class="request-table-td" th:text="${request.city}"/>
+                <td class="request-table-td" th:text="${request.address}"/>
+                <td class="request-table-td" th:text="${#dates.format(request.dateOfChange, 'dd-MM-yyyy')}"/>
+                <td class="request-table-td" th:text="${request.status}"/>
+                <td th:if="${request.status.name() != 'REJECTED'}" class="request-table-td">
+                    <a th:href="@{/cabinet/requests/request_info(requestId=${request.connectionRequestId})}">See more</a>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>

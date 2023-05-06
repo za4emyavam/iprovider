@@ -12,11 +12,12 @@
     <div class="admin-sidebar" th:fragment="adminSideBar">
         <ul>
             <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/tariffs}" th:text="#{admin.sidebar.tariffs}">Tariffs</a></li>
+            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/add_services}">Additional Services</a></li>
+            <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/services}" th:text="#{admin.sidebar.services}">Services</a></li>
             <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/check_payments}" th:text="#{admin.sidebar.checks}">Check payments</a></li>
             <li sec:authorize="hasRole('MAIN_ADMIN')"><a th:href="@{/admin/statistics}" th:text="#{admin.sidebar.stat}">Statistics</a></li>
             <li><a th:href="@{/admin/requests}" th:text="#{admin.sidebar.requests}">Requests</a></li>
             <li><a th:href="@{/admin/users}" th:text="#{admin.sidebar.users}">Users</a></li>
-            <li><a th:href="@{/admin/services}" th:text="#{admin.sidebar.services}">Services</a></li>
         </ul>
     </div>
     <div class="admin-content" th:fragment="adminContent">

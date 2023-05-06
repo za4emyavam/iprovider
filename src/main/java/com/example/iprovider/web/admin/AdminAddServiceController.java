@@ -52,11 +52,13 @@ public class AdminAddServiceController {
     }
 
     @RequestMapping(value = "/admin/add_services/create", method = RequestMethod.POST)
-    public String processCreateAdditionalService(@ModelAttribute @Valid AdditionalService additionalService, Errors errors) {
+    public String processCreateAdditionalService(@ModelAttribute @Valid AdditionalService additionalService, Errors errors, Model model) {
         if (errors.hasErrors()) {
             log.error("Validation error: {}", errors);
+            model.addAttribute("addService", new AdditionalService());
             return "admin/add_services/create";
         }
+        additionalService.setStatus(AdditionalService.Status.ACTIVE);
         additionalServiceRepository.create(additionalService);
         return "redirect:/admin/add_services";
     }

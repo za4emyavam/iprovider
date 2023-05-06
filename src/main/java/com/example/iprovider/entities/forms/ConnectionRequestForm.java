@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,11 +24,18 @@ public class ConnectionRequestForm implements Serializable {
     private Tariff tariff;
     private List<AdditionalService> additionalServiceList;
 
-    public ConnectionRequestForm(Integer subscriber, String city, String address,
+    public ConnectionRequestForm(Long subscriber, String city, String address,
                                  List<AdditionalService> additionalServiceList) {
-        this.subscriber = (long) subscriber;
+        this.subscriber = subscriber;
         this.city = city;
         this.address = address;
         this.additionalServiceList = additionalServiceList;
+    }
+
+    public List<Long> getAdditionalServicesId() {
+        List<Long> res = new ArrayList<>();
+        for (AdditionalService additionalService : additionalServiceList)
+            res.add(additionalService.getAdditionalServiceId());
+        return res;
     }
 }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Cabinet</title>
+  <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+  <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+</head>
+<body>
+
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="cabinet-container">
+  <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
+  </div>
+  <div class="cabinet-content" th:fragment="cabinetContent">
+    <h1>Request info: </h1>
+    <p>Tariff: <span th:text="${request.tariff.name}"/></p>
+    <p>Status: <span th:text="${request.status}"/></p>
+    <p>Date of change: <span
+            th:text="${#dates.format(request.dateOfChange, 'dd-MM-yyyy')}"/></p>
+    <p>City: <span th:text="${request.city}"/></p>
+    <p>Address: <span th:text="${request.address}"/> </p>
+    <p>Additional service(s):</p>
+    <table class="addservices-table">
+      <tr>
+        <th class="addservices-table-th">Name</th>
+        <th class="addservices-table-th">Description</th>
+        <th class="addservices-table-th">Cost</th>
+        <th class="addservices-table-th">Status</th>
+      </tr>
+      <tr th:each="service : ${additionalServices}">
+        <td class="addservices-table-td" th:text="${service.serviceId.name}"/>
+        <td class="addservices-table-td" th:text="${service.serviceId.description}"/>
+        <td class="addservices-table-td" th:text="${service.serviceId.cost}"/>
+        <td class="addservices-table-td" th:text="${service.status}"/>
+      </tr>
+    </table>
+    <br/>
+    <a th:if="${request.status.name() == 'IN_PROCESSING'}"
+       th:href="@{/cabinet/requests/update(requestId=${request.connectionRequestId})}">
+      Change connection request
+    </a>
+
+    <form method="post" th:action="@{/cabinet/requests/delete(requestId=${request.connectionRequestId})}"
+          id="deleteRequestForm">
+      <input type="submit" id="delete" name="delete" value="Reject request"/>
+    </form>
+  </div>
+</div>
+<footer class="footer" th:insert="~{template.html :: footerFragment}"></footer>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+<script>
+  var form = document.getElementById("deleteRequestForm");
+  form.addEventListener("submit", function (event) {
+    validateForm(event)
+  });
+
+  function validateForm(event) {
+    event.preventDefault();
+    if (confirm("Are you sure to reject connection request?")) {
+      form.submit();
+    }
+  }
+</script>
+</body>
+</html>

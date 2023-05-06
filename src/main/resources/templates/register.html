@@ -11,9 +11,12 @@
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <h1>Register</h1>
 
-<form method="post" th:action="@{/register}" id="registerForm">
-    <label for="email">Email: </label>
-    <input type="text" name="username" id="email"/><br/>
+<form th:object="${user}" method="post" th:action="@{/register}" id="registerForm">
+    <label for="username">Email: </label>
+    <input type="text" name="username" id="username" th:field="*{username}"/>
+    <span class="error" th:if="${emailError != null}" th:text="${emailError}"></span>
+    <br/>
+
 
     <label for="password">Password: </label>
     <input type="text" name="password" id="password"/><br/>

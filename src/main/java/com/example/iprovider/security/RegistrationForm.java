@@ -1,12 +1,16 @@
 package com.example.iprovider.security;
 
 import com.example.iprovider.entities.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegistrationForm {
     private String username;
     private String password;

@@ -19,7 +19,7 @@
                 <th class="tariff-table-th">Description</th>
                 <th class="tariff-table-th">Cost</th>
             </tr>
-            <tr th:each="service : ${additionalServices}">
+            <tr th:if="${service.status.name == 'ACTIVE'}" th:each="service : ${additionalServices}">
                 <td class="tariff-table-td" th:text="${service.additionalServiceId}"/>
                 <td class="tariff-table-td" th:text="${service.name}"/>
                 <td class="tariff-table-td" th:text="${service.description}"/>

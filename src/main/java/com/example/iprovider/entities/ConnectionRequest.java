@@ -27,8 +27,8 @@ public class ConnectionRequest implements Serializable {
         IN_PROCESSING, REJECTED, APPROVED
     }
 
-    public ConnectionRequest(Integer subscriber, String city, String address) {
-        this.subscriber = (long)subscriber;
+    public ConnectionRequest(Long subscriber, String city, String address) {
+        this.subscriber = subscriber;
         this.city = city;
         this.address = address;
     }

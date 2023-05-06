@@ -24,13 +24,16 @@
             <tr>
                 <th class="services-table-th">Id</th>
                 <th class="services-table-th">Name</th>
-                <th class="services-table-th"></th>
+                <th class="services-table-th">Description</th>
+                <th class="services-table-th">Cost</th>
+                <th class="services-table-th">Status</th>
             </tr>
             <tr th:each="service : ${addServices}">
                 <td class="service-table-td" th:text="${service.additionalServiceId}"/>
                 <td class="service-table-td" th:text="${service.name}"/>
                 <td class="service-table-td" th:text="${service.description}"/>
                 <td class="service-table-td" th:text="${service.cost}"/>
+                <td class="service-table-td" th:text="${service.status.name()}"/>
                 <td class="service-table-td">
                     <!--<form method="get" th:action="@{/admin/add_services/update(addServiceId=${service.additionalServiceId})}"
                           id="updateService">

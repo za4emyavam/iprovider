@@ -20,6 +20,7 @@
                   th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
                 Name validation error
             </span><br/>
+
             <label for="desc">Description:</label>
             <input type="text" th:field="*{description}" name="desc" id="desc"
                    th:placeholder="${currentAddService.description}"/>
@@ -27,16 +28,32 @@
                   th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
                 Description validation error
             </span><br/>
+
             <label for="cost">Cost:</label>
             <input type="number" th:field="*{cost}" name="cost" id="cost" th:placeholder="${currentAddService.cost}"/>
             <span class="validationError"
                   th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}">
                 Cost validation error
             </span><br/>
+
+            <input type="radio" th:field="*{status}" name="status" id="statusDisabled" value="DISABLED"
+                   th:text="Disabled"/><br/>
+            <input type="radio" th:field="*{status}" name="status" id="statusActive" value="ACTIVE"
+                   th:text="Active"/><br/>
+
             <input type="submit" value="Update additional service"/>
         </form>
     </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
+<script>
+    const currentStatus = "[[${currentAddService.status}]]";
+
+    if (currentStatus === "ACTIVE")
+        document.getElementById("statusActive").checked =true;
+    else
+        document.getElementById("statusDisabled").checked =true;
+
+</script>
 </body>
 </html>

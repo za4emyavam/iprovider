@@ -31,10 +31,15 @@ public class AdditionalService implements Serializable {
     @Positive(message = "Value must be positive")
     private Double cost;
 
+    private Status status;
+
     public AdditionalService(String name, String description, Double cost) {
         this.name = name;
         this.description = description;
         this.cost = cost;
     }
 
+    public enum Status {
+        DISABLED, ACTIVE
+    }
 }

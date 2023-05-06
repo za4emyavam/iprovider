@@ -31,7 +31,7 @@
 
             </div>
         </div>
-        <form action="#"
+        <form th:if="${connectionRequest.status.name() == 'IN_PROCESSING'}" action="#"
               th:action="@{/admin/requests/update(requestId=${connectionRequest.connectionRequestId})}" method="post">
             <select name="status">
                 <div th:each="status : ${statuses}">

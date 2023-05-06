@@ -9,4 +9,5 @@ public interface RequestAdditionalServicesRepository {
     Optional<RequestAdditionalServices> read(Long requestAdditionalServicesId);
     Iterable<RequestAdditionalServices> readByConnectionRequestId(Long connectionRequestId);
     Iterable<RequestAdditionalServices> readBySubscriberId(Long subscriberId);
+    boolean delete(Long requestAdditionalServicesId);
 }

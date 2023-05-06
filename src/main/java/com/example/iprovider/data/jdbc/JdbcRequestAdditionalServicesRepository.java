@@ -91,6 +91,14 @@ public class JdbcRequestAdditionalServicesRepository implements RequestAdditiona
         );
     }
 
+    @Override
+    public boolean delete(Long requestAdditionalServicesId) {
+        return jdbcTemplate.update(
+                "delete from request_additional_services where request_additional_services_id=?",
+                requestAdditionalServicesId
+        ) == 1;
+    }
+
     private RequestAdditionalServices mapToRowRequestAdditionalServices(ResultSet row, int rowNum) throws SQLException {
         RequestAdditionalServices res = new RequestAdditionalServices();
         res.setRequestAdditionalServicesId(row.getLong("request_additional_services_id"));

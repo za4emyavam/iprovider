@@ -11,6 +11,8 @@ public interface ConnectionRequestRepository {
     Iterable<ConnectionRequest> readAll();
 
     Iterable<ConnectionRequest> readAll(int page, int size);
+    Iterable<ConnectionRequest> readAllBySubscriber(Long subscriberId);
+    boolean delete(Long connectionRequestId);
 
     Integer getAmount();
 

@@ -63,6 +63,13 @@ public class UpdateRequestController {
         }
         ConnectionRequest request = connectionRequest.get();
         request.setStatus(ConnectionRequest.RequestStatusType.valueOf(status));
+
+        if (request.getStatus() == ConnectionRequest.RequestStatusType.REJECTED) {
+            for (RequestAdditionalServices ras :
+                    requestAdditionalServicesRepository.readByConnectionRequestId(requestId)) {
+                requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
+            }
+        }
         connectionRequestRepository.update(request);
         return "redirect:/admin/requests";
     }

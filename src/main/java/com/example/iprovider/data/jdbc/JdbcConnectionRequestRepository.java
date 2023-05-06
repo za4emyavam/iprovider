@@ -24,7 +24,8 @@ public class JdbcConnectionRequestRepository implements ConnectionRequestReposit
 
     private final TariffRepository tariffRepository;
 
-    public JdbcConnectionRequestRepository(JdbcTemplate jdbcTemplate, TariffRepository tariffRepository) {
+    public JdbcConnectionRequestRepository(JdbcTemplate jdbcTemplate,
+                                           TariffRepository tariffRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.tariffRepository = tariffRepository;
     }
@@ -46,6 +47,28 @@ public class JdbcConnectionRequestRepository implements ConnectionRequestReposit
                 "select * from connection_request " +
                         " limit ? offset ?", this::mapRowToConnectionRequest,
                 size, offset);
+    }
+
+    @Override
+    public Iterable<ConnectionRequest> readAllBySubscriber(Long subscriberId) {
+        return jdbcTemplate.query(
+                "select * from connection_request where subscriber=(?)",
+                this::mapRowToConnectionRequest,
+                subscriberId
+        );
+    }
+
+    @Override
+    public boolean delete(Long connectionRequestId) {
+        jdbcTemplate.update(
+                "delete from request_additional_services where request_id = ?",
+                connectionRequestId
+        );
+
+        return jdbcTemplate.update(
+                "delete from connection_request where connection_request_id=?",
+                connectionRequestId
+        ) == 1;
     }
 
     @Override

@@ -1,11 +1,9 @@
 package com.example.iprovider.web;
 
-import com.example.iprovider.data.TransactionRepository;
-import com.example.iprovider.data.UserRepository;
-import com.example.iprovider.data.UserTariffsRepository;
-import com.example.iprovider.entities.Transaction;
-import com.example.iprovider.entities.User;
+import com.example.iprovider.data.*;
+import com.example.iprovider.entities.*;
 import com.example.iprovider.entities.forms.ChangePasswordForm;
+import com.example.iprovider.entities.forms.ConnectionRequestForm;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,22 +18,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.*;
+
 @Slf4j
 @Controller
 public class CabinetController {
     private final UserTariffsRepository userTariffsRepository;
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final ConnectionRequestRepository connectionRequestRepository;
+    private final RequestAdditionalServicesRepository requestAdditionalServicesRepository;
+    private final TariffRepository tariffRepository;
+    private final AdditionalServiceRepository additionalServiceRepository;
     private final PasswordEncoder passwordEncoder;
 
     public CabinetController(UserTariffsRepository userTariffsRepository,
                              TransactionRepository transactionRepository,
                              UserRepository userRepository,
-                             PasswordEncoder passwordEncoder) {
+                             PasswordEncoder passwordEncoder,
+                             ConnectionRequestRepository connectionRequestRepository,
+                             RequestAdditionalServicesRepository requestAdditionalServicesRepository,
+                             TariffRepository tariffRepository,
+                             AdditionalServiceRepository additionalServiceRepository) {
         this.userTariffsRepository = userTariffsRepository;
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.connectionRequestRepository = connectionRequestRepository;
+        this.requestAdditionalServicesRepository = requestAdditionalServicesRepository;
+        this.tariffRepository = tariffRepository;
+        this.additionalServiceRepository = additionalServiceRepository;
     }
 
     @RequestMapping(value = "/cabinet", method = RequestMethod.GET)
@@ -94,7 +106,7 @@ public class CabinetController {
         model.addAttribute("transactions", transactionRepository.readAllByUserBalanceId(userDetails.getUserId(), page, size));
 
         int number = transactionRepository.getAmountByUserBalanceId(userDetails.getUserId());
-        int maxPage = (int)Math.ceil(number * 1.0 / size);
+        int maxPage = (int) Math.ceil(number * 1.0 / size);
         if (page <= 0 || page > maxPage) {
             page = 1;
         }
@@ -135,7 +147,93 @@ public class CabinetController {
     }
 
     @RequestMapping(value = "/cabinet/requests", method = RequestMethod.GET)
-    public String getRequests(Model model) {
+    public String getRequests(Model model, Authentication authentication) {
+        List<ConnectionRequest> connectionRequestList = new ArrayList<>();
+        User userDetails = (User) authentication.getPrincipal();
+        connectionRequestRepository.readAllBySubscriber(userDetails.getUserId()).forEach(connectionRequestList::add);
+        model.addAttribute("connectionRequest", connectionRequestList);
         return "cabinet/requests";
+    }
+
+    @RequestMapping(value = "/cabinet/requests/request_info", method = RequestMethod.GET)
+    public String getRequestInfoPage(@RequestParam Long requestId, Model model) {
+        Optional<ConnectionRequest> connectionRequest = connectionRequestRepository.read(requestId);
+        if (connectionRequest.isEmpty()) {
+            return "redirect:/cabinet/requests";
+        }
+        model.addAttribute("request", connectionRequest.get());
+
+        List<RequestAdditionalServices> requestAdditionalServices = new ArrayList<>();
+        requestAdditionalServicesRepository.
+                readByConnectionRequestId(requestId).forEach(requestAdditionalServices::add);
+        model.addAttribute("additionalServices", requestAdditionalServices);
+        return "cabinet/requests/request_info";
+    }
+
+    @RequestMapping(value = "/cabinet/requests/update", method = RequestMethod.GET)
+    public String getUpdateRequestPage(@RequestParam Long requestId, Model model, Authentication authentication) {
+        Optional<ConnectionRequest> connectionRequest = connectionRequestRepository.read(requestId);
+        User userDetails = (User) authentication.getPrincipal();
+        if (connectionRequest.isEmpty() ||
+                connectionRequest.get().getStatus() != ConnectionRequest.RequestStatusType.IN_PROCESSING ||
+                !Objects.equals(connectionRequest.get().getSubscriber(), userDetails.getUserId())
+        )
+            return "redirect:/cabinet/requests";
+
+        List<Long> additionalServicesId = new ArrayList<>();
+        requestAdditionalServicesRepository.readByConnectionRequestId(connectionRequest.get().getConnectionRequestId())
+                .forEach(r -> additionalServicesId.add(r.getServiceId().getAdditionalServiceId()));
+
+        model.addAttribute("currentConnectionRequest", connectionRequest.get());
+        model.addAttribute("currentAddServices", additionalServicesId);
+        model.addAttribute("connectionRequestForm", new ConnectionRequestForm());
+        model.addAttribute("tariffList", tariffRepository.readAll());
+        model.addAttribute("addServices", additionalServiceRepository.readAll());
+
+        return "cabinet/requests/update";
+    }
+
+    @RequestMapping(value = "/cabinet/requests/update", method = RequestMethod.POST)
+    public String processUpdateRequest(@RequestParam Long requestId,
+                                       @ModelAttribute ConnectionRequestForm connectionRequestForm, Model model,
+                                       Authentication authentication) {
+        User userDetails = (User) authentication.getPrincipal();
+        ConnectionRequest connectionRequest = new ConnectionRequest(
+                requestId,
+                userDetails.getUserId(),
+                connectionRequestForm.getCity(),
+                connectionRequestForm.getAddress(),
+                connectionRequestForm.getTariff(),
+                new Date(),
+                ConnectionRequest.RequestStatusType.IN_PROCESSING
+        );
+        for (RequestAdditionalServices ras :
+                requestAdditionalServicesRepository.readByConnectionRequestId(requestId)) {
+            requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
+        }
+        connectionRequest = connectionRequestRepository.update(connectionRequest);
+        for (AdditionalService service :
+             connectionRequestForm.getAdditionalServiceList()) {
+            requestAdditionalServicesRepository.create(new RequestAdditionalServices(
+                    connectionRequest, service, RequestAdditionalServices.Status.expected
+            ));
+        }
+        //TODO Validation
+        return "redirect:/cabinet/requests";
+    }
+
+    @RequestMapping(value = "/cabinet/requests/request_info", method = RequestMethod.POST)
+    public String processDeleteRequest(@RequestParam Long requestId) {
+        Optional<ConnectionRequest> connectionRequest = connectionRequestRepository.read(requestId);
+        if (connectionRequest.isEmpty() || connectionRequest.get().getStatus() != ConnectionRequest.RequestStatusType.IN_PROCESSING)
+            return "redirect:/cabinet/requests";
+        for (RequestAdditionalServices ras :
+                requestAdditionalServicesRepository.readByConnectionRequestId(requestId)) {
+            requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
+        }
+        ConnectionRequest updatedConnectionRequest = connectionRequest.get();
+        updatedConnectionRequest.setStatus(ConnectionRequest.RequestStatusType.REJECTED);
+        connectionRequestRepository.update(updatedConnectionRequest);
+        return "redirect:/cabinet/requests";
     }
 }
