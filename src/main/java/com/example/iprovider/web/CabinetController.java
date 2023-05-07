@@ -4,6 +4,7 @@ import com.example.iprovider.data.*;
 import com.example.iprovider.entities.*;
 import com.example.iprovider.entities.forms.ChangePasswordForm;
 import com.example.iprovider.entities.forms.ConnectionRequestForm;
+import com.example.iprovider.entities.forms.UserDetailsForm;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -76,7 +77,7 @@ public class CabinetController {
     @RequestMapping(value = "/cabinet/profile", method = RequestMethod.POST)
     public String unsubscribeTariff(Authentication authentication, @RequestParam long tariffId) {
         User user = (User) authentication.getPrincipal();
-
+        //TODO delete by userTariffs id
         userTariffsRepository.deleteByUserIdTariffId(user.getUserId(), tariffId);
 
         return "redirect:/cabinet";
@@ -212,17 +213,20 @@ public class CabinetController {
             requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
         }
         connectionRequest = connectionRequestRepository.update(connectionRequest);
-        for (AdditionalService service :
-             connectionRequestForm.getAdditionalServiceList()) {
-            requestAdditionalServicesRepository.create(new RequestAdditionalServices(
-                    connectionRequest, service, RequestAdditionalServices.Status.expected
-            ));
+        if (connectionRequestForm.getAdditionalServiceList() != null) {
+            for (AdditionalService service :
+                    connectionRequestForm.getAdditionalServiceList()) {
+                requestAdditionalServicesRepository.create(new RequestAdditionalServices(
+                        connectionRequest, service, RequestAdditionalServices.Status.expected
+                ));
+            }
         }
+
         //TODO Validation
         return "redirect:/cabinet/requests";
     }
 
-    @RequestMapping(value = "/cabinet/requests/request_info", method = RequestMethod.POST)
+    @RequestMapping(value = "/cabinet/requests/request_info/delete", method = RequestMethod.POST)
     public String processDeleteRequest(@RequestParam Long requestId) {
         Optional<ConnectionRequest> connectionRequest = connectionRequestRepository.read(requestId);
         if (connectionRequest.isEmpty() || connectionRequest.get().getStatus() != ConnectionRequest.RequestStatusType.IN_PROCESSING)
@@ -235,5 +239,45 @@ public class CabinetController {
         updatedConnectionRequest.setStatus(ConnectionRequest.RequestStatusType.REJECTED);
         connectionRequestRepository.update(updatedConnectionRequest);
         return "redirect:/cabinet/requests";
+    }
+
+    @RequestMapping(value = "/cabinet/details", method = RequestMethod.GET)
+    public String getUpdateDetailsPage(Model model, Authentication authentication) {
+        User userDetails = (User) authentication.getPrincipal();
+
+        model.addAttribute("newUserDetails", new UserDetailsForm());
+        model.addAttribute("userDetails", new UserDetailsForm(
+                userDetails.getEmail(),
+                userDetails.getFirstname(),
+                userDetails.getSurname(),
+                userDetails.getTelephoneNumber()
+        ));
+
+        return "cabinet/details";
+    }
+
+    @RequestMapping(value = "/cabinet/details", method = RequestMethod.POST)
+    public String processUpdateUserDetails(@ModelAttribute UserDetailsForm newUserDetails,
+                                           Authentication authentication,
+                                           Model model) {
+        User userDetails = (User) authentication.getPrincipal();
+        if (!userDetails.getEmail().equals(newUserDetails.getEmail())) {
+            if (userRepository.findByUsername(newUserDetails.getEmail()) != null) {
+                model.addAttribute("error_email", "This email is already taken");
+                model.addAttribute("newUserDetails", new UserDetailsForm());
+                model.addAttribute("userDetails", new UserDetailsForm(
+                        userDetails.getEmail(),
+                        userDetails.getFirstname(),
+                        userDetails.getSurname(),
+                        userDetails.getTelephoneNumber()
+                ));
+            }
+        }
+
+        newUserDetails.setUserId(userDetails.getUserId());
+        userRepository.updateDetails(newUserDetails);
+
+        //TODO validation
+        return "redirect:/cabinet/profile";
     }
 }

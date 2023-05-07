@@ -3,6 +3,7 @@ package com.example.iprovider.data.jdbc;
 import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.entities.User;
 import com.example.iprovider.entities.forms.SortUserStatisticsForm;
+import com.example.iprovider.entities.forms.UserDetailsForm;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -128,6 +129,19 @@ public class JdbcUserRepository implements UserRepository {
                 user.getUserId()
         );
         return user;
+    }
+
+    @Override
+    public User updateDetails(UserDetailsForm userDetailsForm) {
+        jdbcTemplate.update("update \"user\" u set email=?, firstname=?, surname=?, telephone_number=? " +
+                "where u.user_id = ?",
+                userDetailsForm.getEmail(),
+                userDetailsForm.getFirstname(),
+                userDetailsForm.getSurname(),
+                userDetailsForm.getPhoneNumber(),
+                userDetailsForm.getUserId()
+        );
+        return findByUsername(userDetailsForm.getEmail());
     }
 
     @Override

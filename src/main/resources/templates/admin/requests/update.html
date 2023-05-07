@@ -13,14 +13,14 @@
         <div>
             <p>Request id: <span th:text="${connectionRequest.connectionRequestId}"/></p>
             <p>Subscriber id: <span th:text="${subscriber.userId}"/></p>
-            <p>Email: <span th:text="${subscriber.email}"/> </p>
+            <p>Email: <span th:text="${subscriber.email}"/></p>
             <p>Full name: <span th:text="${subscriber.firstname + ' ' + subscriber.surname}"/></p>
             <p>Status: <span th:text="${subscriber.userStatus}"/></p>
-            <p>Balance: <span th:text="${subscriber.userBalance}"/> </p>
+            <p>Balance: <span th:text="${subscriber.userBalance}"/></p>
             <p>Phone number: <span th:text="${subscriber.telephoneNumber}"/></p>
             <p>City: <span th:text="${connectionRequest.city}"/></p>
-            <p>Address: <span th:text="${connectionRequest.address}"/> </p>
-            <p>Date of request: <span th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}"/> </p>
+            <p>Address: <span th:text="${connectionRequest.address}"/></p>
+            <p>Date of request: <span th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}"/></p>
             <p>Request status: <span th:text="${connectionRequest.status}"/></p>
             <p>Tariff: <span th:text="${connectionRequest.tariff.name}"/></p>
             <div th:if="${!additionalServices.isEmpty()}">
@@ -31,17 +31,29 @@
 
             </div>
         </div>
-        <form th:if="${connectionRequest.status.name() == 'IN_PROCESSING'}" action="#"
+        <form th:if="${connectionRequest.status.name() == 'IN_PROCESSING' || connectionRequest.status.name() == 'APPROVED'}"
+              action="#"
               th:action="@{/admin/requests/update(requestId=${connectionRequest.connectionRequestId})}" method="post">
-            <select name="status">
-                <div th:each="status : ${statuses}">
-                    <option th:value="${status.name()}" th:text="${status}"/>
-                </div>
+            <select name="status" id="status-select">
+                <option th:each="status : ${statuses}" th:value="${status.name()}" th:text="${status}"/>
             </select>
             <input type="submit" value="Update request"/>
         </form>
     </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
+<script>
+    const statusValue = "[[${connectionRequest.status}]]";
+    const options = document.getElementById("status-select");
+    if (statusValue === "IN_PROCESSING") {
+        options.querySelector('option[value="CONNECTED"]').disabled = true;
+    } else if (statusValue === "APPROVED") {
+        options.value = "CONNECTED";
+        options.querySelector('option[value="CONNECTED"]').disabled = false;
+        options.querySelector('option[value="IN_PROCESSING"]').disabled = true;
+        options.querySelector('option[value="APPROVED"]').disabled = true;
+        options.querySelector('option[value="REJECTED"]').disabled = true;
+    }
+</script>
 </body>
 </html>

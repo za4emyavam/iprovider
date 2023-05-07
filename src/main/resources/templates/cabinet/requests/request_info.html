@@ -41,7 +41,8 @@
       Change connection request
     </a>
 
-    <form method="post" th:action="@{/cabinet/requests/delete(requestId=${request.connectionRequestId})}"
+    <form th:if="${request.status.name() == 'IN_PROCESSING'}" method="post"
+          th:action="@{/cabinet/requests/request_info/delete(requestId=${request.connectionRequestId})}"
           id="deleteRequestForm">
       <input type="submit" id="delete" name="delete" value="Reject request"/>
     </form>
@@ -50,7 +51,7 @@
 <footer class="footer" th:insert="~{template.html :: footerFragment}"></footer>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
 <script>
-  var form = document.getElementById("deleteRequestForm");
+  const form = document.getElementById("deleteRequestForm");
   form.addEventListener("submit", function (event) {
     validateForm(event)
   });

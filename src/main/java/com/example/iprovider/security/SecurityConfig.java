@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
+                //.successHandler(new MyAuthenticationSuccessHandler())
                 .loginPage("/login")
                 .failureUrl("/login-error")
                 .defaultSuccessUrl("/")

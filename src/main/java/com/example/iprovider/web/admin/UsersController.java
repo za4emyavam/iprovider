@@ -98,6 +98,7 @@ public class UsersController {
     @RequestMapping(value = "/admin/users/user_info/delete")
     public String deleteTariffFromUser(RedirectAttributes redirectAttributes,
                                        @Valid @ModelAttribute("deleteTariffFromUserForm") DeleteTariffFromUserForm deleteTariffFromUserForm) {
+        //TODO удалять по id usertariffs, а не по отдельность и изменить connection_request
         if (userTariffsRepository.deleteByUserIdTariffId(deleteTariffFromUserForm.getUserId(), deleteTariffFromUserForm.getTariffId())) {
             redirectAttributes.addAttribute("userId", deleteTariffFromUserForm.getUserId());
             return "redirect:/admin/users/user_info";

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cabinet</title>
+    <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+</head>
+<body>
+<header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
+<div class="cabinet-container">
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
+    </div>
+    <div class="cabinet-content" th:fragment="cabinetContent">
+        <form action="#" th:action="@{/cabinet/details}" th:object="${newUserDetails}" method="post">
+            <label for="email">Email:</label>
+            <input type="email" th:field="*{email}" id="email"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                Email validation error
+            </span>
+            <br/><br/>
+
+            <label for="firstname">Firstname:</label>
+            <input type="text" th:field="*{firstname}" id="firstname"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">
+                Firstname validation error
+            </span><br/><br/>
+
+            <label for="surname">Surname:</label>
+            <input type="text" th:field="*{surname}" id="surname"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">
+                Surname validation error
+            </span>
+            <br/><br/>
+
+            <label for="phoneNumber">Phone number:</label>
+            <input type="text" th:field="*{phoneNumber}" id="phoneNumber"/>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">
+                Phone number validation error
+            </span>
+            <br/><br/>
+
+            <input type="submit" value="Update details"/>
+        </form>
+    </div>
+</div>
+<div th:insert="~{template.html :: headerScriptFragment}"></div>
+</body>
+</html>
