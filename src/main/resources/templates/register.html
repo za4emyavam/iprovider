@@ -5,36 +5,69 @@
     <title>Taco Cloud</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
 </head>
 
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
-<h1>Register</h1>
+<div class="register-container">
+    <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
+    <div class="register-form">
+        <h1 class="page-name">Register</h1>
+        <p>Please fill in this form to create an account.</p>
 
-<form th:object="${user}" method="post" th:action="@{/register}" id="registerForm">
-    <label for="username">Email: </label>
-    <input type="text" name="username" id="username" th:field="*{username}"/>
-    <span class="error" th:if="${emailError != null}" th:text="${emailError}"></span>
-    <br/>
+        <form th:object="${user}" method="post" th:action="@{/register}" id="registerForm">
+            <label for="username"><b>Email</b></label>
+            <br/>
+            <input type="text" name="username" id="username" th:field="*{username}"
+                   placeholder="*Enter Email"/>
+            <span class="error" th:if="${emailError != null}" th:text="${emailError}"></span>
+            <span class="validationError" th:errors="*{username}"></span>
+            <br/>
 
+            <label for="password"><b>Password</b></label>
+            <br/>
+            <input type="password" name="password" id="password" th:field="*{password}"
+                   placeholder="*Enter Password"/>
+            <span class="validationError" th:errors="*{password}"></span>
+            <br/>
 
-    <label for="password">Password: </label>
-    <input type="text" name="password" id="password"/><br/>
+            <label for="confirmPass"><b>Repeat password</b></label>
+            <br/>
+            <input type="password" name="confirmPass" id="confirmPass" th:field="*{confirmPass}"
+                   placeholder="*Repeat Password"/>
+            <span class="error" th:if="${passError != null}" th:text="${passError}"></span>
+            <br/>
 
-    <label for="confirm">Confirm password: </label>
-    <input type="text" name="confirm" id="confirm"/><br/>
+            <label for="firstname"><b>Firstname</b></label>
+            <br/>
+            <input type="text" name="firstname" id="firstname" th:field="*{firstname}"
+                   placeholder="*Enter Firstname"/>
+            <span class="validationError" th:errors="*{firstname}"></span>
+            <br/>
 
-    <label for="firstname">Firstname: </label>
-    <input type="text" name="firstname" id="firstname"/><br/>
+            <label for="surname"><b>Surname</b></label>
+            <br/>
+            <input type="text" name="surname" id="surname" th:field="*{surname}"
+                   placeholder="*Enter Surname"/>
+            <span class="validationError" th:errors="*{surname}"></span>
+            <br/>
 
-    <label for="surname">Surname: </label>
-    <input type="text" name="surname" id="surname"/><br/>
+            <label for="phone"><b>Phone</b></label>
+            <br/>
+            <input type="text" name="phone" id="phone" th:field="*{phone}"
+                   placeholder="*Enter phone number"/>
+            <span class="validationError" th:errors="*{phone}"></span>
+            <br/>
 
-    <label for="phone">Phone: </label>
-    <input type="text" name="phone" id="phone"/><br/>
+            <input class="registerbtn" type="submit" value="Register"/>
 
-    <input type="submit" value="Register"/>
-</form>
+        </form>
+        <div class="signin">
+            <p>Already have an account? <a th:href="@{/login}">Sign in</a>.</p>
+        </div>
+    </div>
+</div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>
 </html>

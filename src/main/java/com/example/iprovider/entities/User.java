@@ -12,6 +12,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * The User class represents a user of the system. It implements the {@link UserDetails} interface from Spring Security,
+ * which provides information about the user's security credentials and roles.
+ */
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -30,6 +34,10 @@ public class User implements UserDetails {
     private String surname;
     private String telephoneNumber;
 
+    /**
+     * Returns the authorities granted to the user. The authorities are based on the user's role in the system.
+     * @return the authorities granted to the user.
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return switch (this.userRole) {
@@ -69,35 +77,61 @@ public class User implements UserDetails {
         this.telephoneNumber = telephoneNumber;
     }
 
+    /**
+     * Returns the username used to authenticate the user.
+     * @return the username used to authenticate the user.
+     */
     @Override
     public String getUsername() {
         return this.email;
     }
 
+    /**
+     * Indicates whether the user's account has expired.
+     * @return true if the user's account is valid (ie non-expired), false otherwise.
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Indicates whether the user is locked or unlocked.
+     * @return true if the user is not locked, false otherwise.
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Indicates whether the user's credentials (password) has expired.
+     * @return true if the user's credentials are valid (ie non-expired), false otherwise.
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Indicates whether the user is enabled or disabled.
+     * @return true if the user is enabled, false otherwise.
+     */
     @Override
     public boolean isEnabled() {
         return true;
     }
 
+    /**
+     * Represents the possible roles of a user in the system.
+     */
     public enum RoleType {
         USER, ADMIN, MAIN_ADMIN
     }
 
+    /**
+     * Represents the possible status of a user in the system.
+     */
     public enum UserStatusType {
         SUBSCRIBED, BLOCKED
     }

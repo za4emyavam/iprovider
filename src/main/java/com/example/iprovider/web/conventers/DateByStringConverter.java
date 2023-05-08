@@ -1,4 +1,4 @@
-package com.example.iprovider.web.admin;
+package com.example.iprovider.web.conventers;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

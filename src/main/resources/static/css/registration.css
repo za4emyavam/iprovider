@@ -1,4 +1,4 @@
-.login-container {
+.register-container {
     display: flex;
 }
 
@@ -22,14 +22,8 @@
     color: #333;
     text-decoration: none;
 }
-
-.login-form {
-    flex: 3;
-    padding: 20px;
-}
-
 /* Add padding to containers */
-.login-form {
+.register-form {
     flex: 3;
     padding: 20px;
 }
@@ -59,7 +53,7 @@ hr {
 }
 
 /* Set a style for the submit/register button */
-.loginbtn {
+.registerbtn {
     background-color: #4CAF50;
     color: white;
     padding: 16px 20px;
@@ -70,7 +64,7 @@ hr {
     opacity: 0.9;
 }
 
-.loginbtn:hover {
+.registerbtn:hover {
     opacity:1;
 }
 

@@ -11,14 +11,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration class for Spring Security.
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Bean for creating a password encoder.
+     *
+     * @return a {@link PasswordEncoder} instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Bean for creating a user details service that retrieves user information from a user repository.
+     *
+     * @param userRepo a {@link UserRepository} instance
+     * @return a {@link UserDetailsService} instance
+     */
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepo) {
         return username -> {
@@ -28,6 +42,13 @@ public class SecurityConfig {
         };
     }
 
+    /**
+     * Bean for creating a security filter chain that configures HTTP security for the application.
+     *
+     * @param http an {@link HttpSecurity} instance
+     * @return a {@link SecurityFilterChain} instance
+     * @throws Exception if an error occurs while configuring HTTP security
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests()
@@ -36,7 +57,6 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                //.successHandler(new MyAuthenticationSuccessHandler())
                 .loginPage("/login")
                 .failureUrl("/login-error")
                 .defaultSuccessUrl("/")
@@ -46,5 +66,4 @@ public class SecurityConfig {
                 .and()
                 .build();
     }
-
 }

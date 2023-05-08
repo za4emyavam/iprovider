@@ -13,30 +13,31 @@
     <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
     <div class="request-form">
         <h1 class="page-name">Request</h1>
-        <form action="#" th:object="${connectionRequest}"
-              th:action="@{/tariffs/request(tariffId=${tariffId})}" method="post">
-            <!--<input type="hidden" th:field="*{subscriber}" th:value="${#authentication.principal.userId}">
-            <p>Current userId: <p th:text="${#authentication.principal.userId}"/></p>-->
-            <label for="city">City:</label>
-            <input type="text" th:field="*{city}" name="city" id="city"/>
-            <br/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('city')}" th:errors="*{city}">
-                City validation error
-            </span><br/>
+        <p>Please fill in this form to create a request to connect tariff.</p>
 
-            <label for="address">Description:</label>
-            <input type="text" th:field="*{address}" name="address" id="address"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('address')}" th:errors="*{address}">
-                Address validation error
-            </span><br/>
-            <label><a th:href="@{/services}" target="_blank"> Additional service(s): </a></label><br/>
+        <form th:object="${connectionRequest}"
+              th:action="@{/tariffs/request(tariffId=${tariffId})}" method="post">
+
+            <label for="city"><b>City</b></label><br/>
+            <input type="text" th:field="*{city}" name="city" id="city"
+                   placeholder="*Enter City"/>
+            <span class="validationError" th:errors="*{city}"></span><br/>
+
+            <label for="address"><b>Address</b></label><br/>
+            <input type="text" th:field="*{address}" name="address" id="address"
+                   placeholder="*Enter Address"/>
+            <span class="validationError" th:errors="*{address}"></span><br/>
+
+            <label>Additional services <a th:href="@{/services}" target="_blank">(See All)</a>: </label><br/><br/>
             <div class="checkboxes-services" th:each="service : ${additionalServices}">
-                <input th:field="*{additionalServiceList}" type="checkbox" th:value="${service.additionalServiceId}">
-                <span th:text="${service.name}"></span><br/>
+                <label class="check-container">
+                    <label class="check-text" th:text="${service.name}"></label>
+                    <input th:field="*{additionalServiceList}" type="checkbox"
+                           th:value="${service.additionalServiceId}">
+                    <span class="checkmark"></span><br/>
+                </label>
             </div>
-            <input type="submit" value="Create request"/>
+            <input class="submitbtn" type="submit" value="Create request"/>
         </form>
     </div>
 </div>

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -39,10 +39,10 @@ public class TariffsController {
 
     @RequestMapping(value = "/tariffs", method = RequestMethod.GET)
     public String tariffsTable(Model model,
-                          @RequestParam(defaultValue = "1") int page,
-                          @RequestParam(defaultValue = "5") int size) {
+                               @RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "5") int size) {
         int number = tariffRepository.getAmount();
-        int maxPage = (int)Math.ceil(number * 1.0 / size);
+        int maxPage = (int) Math.ceil(number * 1.0 / size);
         if (page <= 0 || page > maxPage) {
             page = 1;
         }
@@ -59,8 +59,6 @@ public class TariffsController {
         if (tariff.isEmpty()) {
             return "redirect:/tariffs";
         }
-//        ConnectionRequest connectionRequest = new ConnectionRequest();
-        //connectionRequest.setTariff(tariff.get());
         ConnectionRequestForm connectionRequest = new ConnectionRequestForm();
         model.addAttribute("connectionRequest", connectionRequest);
         model.addAttribute("tariffId", tariffId);
@@ -69,28 +67,28 @@ public class TariffsController {
     }
 
     @RequestMapping(value = "/tariffs/request", method = RequestMethod.POST)
-    public String processRequest(@ModelAttribute @Valid ConnectionRequestForm connectionRequest,
-                                 @RequestParam long tariffId, Errors errors,
+    public String processRequest(@ModelAttribute("connectionRequest") @Valid ConnectionRequestForm connectionRequest,
+                                 BindingResult bindingResult, @RequestParam long tariffId, Model model,
                                  Authentication authentication) {
-        if(errors.hasErrors()) {
-            log.error("Validation error: {}", errors);
-            return "request";
-        }
         Optional<Tariff> tariff = tariffRepository.readByID(tariffId);
         if (tariff.isEmpty()) {
             return "redirect:/tariffs";
         }
 
-        ConnectionRequest conReq = new ConnectionRequest();
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error: {}", bindingResult);
+            model.addAttribute("connectionRequest", connectionRequest);
+            model.addAttribute("tariffId", tariffId);
+            model.addAttribute("additionalServices", additionalServiceRepository.readAll());
+            return "request";
+        }
+
+        ConnectionRequest conReq = fillConRequest(connectionRequest);
 
         User userDetails = (User) authentication.getPrincipal();
         conReq.setSubscriber(userDetails.getUserId());
-
         conReq.setTariff(tariff.get());
-        conReq.setDateOfChange(new Date());
-        conReq.setStatus(ConnectionRequest.RequestStatusType.IN_PROCESSING);
-        conReq.setAddress(connectionRequest.getAddress());
-        conReq.setCity(connectionRequest.getCity());
+
         connectionRequestRepository.create(conReq);
         //TODO
         for (AdditionalService service :
@@ -102,6 +100,16 @@ public class TariffsController {
             requestAdditionalServicesRepository.create(temp);
         }
         return "redirect:/tariffs";
+    }
+
+    private ConnectionRequest fillConRequest(ConnectionRequestForm connectionRequestForm) {
+        ConnectionRequest conReq = new ConnectionRequest();
+
+        conReq.setDateOfChange(new Date());
+        conReq.setStatus(ConnectionRequest.RequestStatusType.IN_PROCESSING);
+        conReq.setAddress(connectionRequestForm.getAddress());
+        conReq.setCity(connectionRequestForm.getCity());
+        return conReq;
     }
 
     @RequestMapping(value = "/services", method = RequestMethod.GET)
