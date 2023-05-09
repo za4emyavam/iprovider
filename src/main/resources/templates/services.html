@@ -11,21 +11,14 @@
 <div class="tariff-container">
     <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
     <div class="tariff-content">
-        <h1 class="page-name">List of services</h1>
-        <table class="tariffs-table">
-            <tr>
-                <th class="tariff-table-th">Id</th>
-                <th class="tariff-table-th">Name</th>
-                <th class="tariff-table-th">Description</th>
-                <th class="tariff-table-th">Cost</th>
-            </tr>
-            <tr th:if="${service.status.name == 'ACTIVE'}" th:each="service : ${additionalServices}">
-                <td class="tariff-table-td" th:text="${service.additionalServiceId}"/>
-                <td class="tariff-table-td" th:text="${service.name}"/>
-                <td class="tariff-table-td" th:text="${service.description}"/>
-                <td class="tariff-table-td" th:text="${service.cost}"/>
-            </tr>
-        </table>
+        <h1 class="page-name">List of additional services</h1>
+        <div th:if="${service.status.name == 'ACTIVE'}" th:each="service : ${additionalServices}" class="columns">
+            <ul class="price">
+                <li class="header" th:text="${service.name}"></li>
+                <li class="grey" th:text="${service.cost + ' UAH'}"></li>
+                <li class="desc" th:text="${service.description}"></li>
+            </ul>
+        </div>
 
     </div>
 </div>

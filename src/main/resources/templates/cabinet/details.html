@@ -4,6 +4,7 @@
     <title>Cabinet</title>
     <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cabinet/details.css}"/>
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
@@ -11,39 +12,42 @@
     <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
     </div>
     <div class="cabinet-content" th:fragment="cabinetContent">
+        <h1 class="page-name">Change account details</h1>
         <form action="#" th:action="@{/cabinet/details}" th:object="${newUserDetails}" method="post">
-            <label for="email">Email:</label>
-            <input type="email" th:field="*{email}" id="email"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
-                Email validation error
-            </span>
-            <br/><br/>
 
-            <label for="firstname">Firstname:</label>
-            <input type="text" th:field="*{firstname}" id="firstname"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">
-                Firstname validation error
-            </span><br/><br/>
+            <label for="email"><b>Email</b></label><br/>
+            <input type="text" th:field="*{email}" id="email"
+                   placeholder="Enter new email"/>
+            <span class="error" th:if="${error_email != null}" th:text="${error_email}"></span>
+            <span class="validationError" th:errors="*{email}"></span>
+            <br/>
 
-            <label for="surname">Surname:</label>
-            <input type="text" th:field="*{surname}" id="surname"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">
-                Surname validation error
-            </span>
-            <br/><br/>
+            <label for="firstname"><b>Firstname</b></label><br/>
+            <input type="text" th:field="*{firstname}" id="firstname"
+                   placeholder="Enter new firstname"/>
+            <span class="validationError" th:errors="*{firstname}"></span>
+            <br/>
 
-            <label for="phoneNumber">Phone number:</label>
-            <input type="text" th:field="*{phoneNumber}" id="phoneNumber"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">
-                Phone number validation error
-            </span>
-            <br/><br/>
+            <label for="surname"><b>Surname</b></label><br/>
+            <input type="text" th:field="*{surname}" id="surname"
+                   placeholder="Enter new surname"/>
+            <span class="validationError" th:errors="*{surname}"></span>
+            <br/>
 
-            <input type="submit" value="Update details"/>
+            <label for="phoneNumber"><b>Phone number</b></label><br/>
+            <input type="text" th:field="*{phoneNumber}" id="phoneNumber"
+                   placeholder="Enter new phone number"/>
+            <span class="validationError" th:errors="*{phoneNumber}"></span>
+            <br/>
+
+            <label for="password"><b>Password</b></label><br/>
+            <input type="password" th:field="*{password}" id="password"
+                   placeholder="Enter you password"/>
+            <span class="error" th:if="${passError != null}" th:text="${passError}"></span>
+            <span class="validationError" th:errors="*{password}"></span>
+            <br/>
+
+            <input class="submitbtn" type="submit" value="Update details"/>
         </form>
     </div>
 </div>

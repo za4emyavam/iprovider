@@ -3,6 +3,10 @@ package com.example.iprovider.data.jdbc;
 import com.example.iprovider.data.TariffRepository;
 import com.example.iprovider.entities.Service;
 import com.example.iprovider.entities.Tariff;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
@@ -40,7 +44,23 @@ public class JdbcTariffRepository implements TariffRepository {
     }
 
     @Override
-    public Integer getAmount() {
+    public Page<Tariff> readAll(Pageable page) {
+        Sort.Order order = !page.getSort().isEmpty() ?
+                page.getSort().toList().get(0) :
+                Sort.Order.by("tariff_id");
+
+        List<Tariff> tariffs = jdbcTemplate.query("select * from tariff where status = 'active' order by "
+                        + order.getProperty() + " " + order.getDirection().name() + " limit ? offset ?",
+            this::mapToRowTariff,
+                page.getPageSize(),
+                page.getOffset()
+        );
+
+        return new PageImpl<>(tariffs, page, count());
+    }
+
+    @Override
+    public Integer count() {
         return jdbcTemplate.query("select count(tariff_id) from tariff",
                 (rs, rowNum) -> rs.getInt(1))
                 .get(0);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcUserTariffsRepository implements UserTariffsRepository {
@@ -21,6 +22,15 @@ public class JdbcUserTariffsRepository implements UserTariffsRepository {
                                      JdbcUserRepository jdbcUserRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.jdbcUserRepository = jdbcUserRepository;
+    }
+
+    @Override
+    public Optional<UserTariffs> read(Long userTariffsId) {
+        List<UserTariffs> res = jdbcTemplate.query("select * from user_tariffs ut " +
+                "where user_tariffs_id=?", this::mapRowToUserTariffs, userTariffsId);
+        return res.size() == 0 ?
+                Optional.empty() :
+                Optional.of(res.get(0));
     }
 
     @Override
@@ -46,7 +56,7 @@ public class JdbcUserTariffsRepository implements UserTariffsRepository {
     @Override
     public Integer getAmount() {
         return jdbcTemplate.query("select count(*) from user_tariffs",
-                (rs, rowNum) -> rs.getInt(1))
+                        (rs, rowNum) -> rs.getInt(1))
                 .get(0);
     }
 
@@ -61,6 +71,14 @@ public class JdbcUserTariffsRepository implements UserTariffsRepository {
         return jdbcTemplate.update(
                 "delete from user_tariffs where user_id=? and tariff_id=?",
                 userId, tariffId
+        ) != 0;
+    }
+
+    @Override
+    public boolean delete(Long userTariffId) {
+        return jdbcTemplate.update(
+                "delete from user_tariffs where user_tariffs_id=?",
+                userTariffId
         ) != 0;
     }
 

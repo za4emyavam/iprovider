@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,12 +56,6 @@ public class CabinetController {
         return "redirect:/cabinet/profile";
     }
 
-    @RequestMapping(value = "/cabinet/refill", method = RequestMethod.GET)
-    public String getRefill(Model model) {
-        model.addAttribute("transaction", new Transaction());
-        return "cabinet/refill";
-    }
-
     @RequestMapping(value = "/cabinet/profile", method = RequestMethod.GET)
     public String cabinetModel(Model model, Authentication authentication) {
         //Updates authentication
@@ -70,25 +64,35 @@ public class CabinetController {
         SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
 
         User userDetails = (User) updatedAuthentication.getPrincipal();
-        model.addAttribute("tariffs", userTariffsRepository.readById(userDetails.getUserId()));
+        List<UserTariffs> tariffs = new ArrayList<>();
+        userTariffsRepository.readById(userDetails.getUserId()).forEach(tariffs::add);
+
+        model.addAttribute("tariffs", tariffs);
         return "cabinet/profile";
     }
 
     @RequestMapping(value = "/cabinet/profile", method = RequestMethod.POST)
-    public String unsubscribeTariff(Authentication authentication, @RequestParam long tariffId) {
-        User user = (User) authentication.getPrincipal();
-        //TODO delete by userTariffs id
-        userTariffsRepository.deleteByUserIdTariffId(user.getUserId(), tariffId);
+    public String unsubscribeTariff(@RequestParam("tariffId") long userTariffId) {
+        Optional<UserTariffs> ut = userTariffsRepository.read(userTariffId);
+        if (ut.isPresent())
+            userTariffsRepository.delete(userTariffId);
 
         return "redirect:/cabinet";
     }
 
+
+    @RequestMapping(value = "/cabinet/refill", method = RequestMethod.GET)
+    public String getRefill(Model model) {
+        model.addAttribute("transaction", new Transaction());
+        return "cabinet/refill";
+    }
+
     @RequestMapping(value = "/cabinet/refill", method = RequestMethod.POST)
-    public String processRefill(@ModelAttribute @Valid Transaction transaction,
-                                Errors errors,
+    public String processRefill(@ModelAttribute("transaction") @Valid Transaction transaction,
+                                BindingResult bindingResult,
                                 Authentication authentication) {
-        if (errors.hasErrors()) {
-            log.error("Validation error {}", errors);
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error {}", bindingResult);
             return "cabinet/refill";
         }
         User userDetails = (User) authentication.getPrincipal();
@@ -124,27 +128,33 @@ public class CabinetController {
     }
 
     @RequestMapping(value = "/cabinet/services", method = RequestMethod.POST)
-    public String processNewPassword(Model model, @ModelAttribute @Valid ChangePasswordForm changePasswordForm,
-                                     Errors errors,
+    public String processNewPassword(Model model, @ModelAttribute("changePasswordForm") @Valid ChangePasswordForm changePasswordForm,
+                                     BindingResult bindingResult,
                                      Authentication authentication) {
-        if (errors.hasErrors()) {
-            log.error("Validation error, {}", errors);
+        //If have jakarta.validation errors
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error, {}", bindingResult);
             return "cabinet/services";
         }
+
+        //Check, is old password matches to current
         User user = (User) authentication.getPrincipal();
         user = userRepository.findByUsername(user.getUsername());
-        if (passwordEncoder.matches(changePasswordForm.getOldPass(), user.getPassword())) {
-            if (changePasswordForm.getNewPass().equals(changePasswordForm.getOneMoreNewPass())) {
-                user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPass()));
-                userRepository.updatePass(user);
-                return "redirect:/cabinet";
-            } else {
-                model.addAttribute("msg", "newPassesNotEqual");
-            }
-        } else {
-            model.addAttribute("msg", "oldPassError");
+        if (!passwordEncoder.matches(changePasswordForm.getOldPass(), user.getPassword())) {
+            model.addAttribute("passError", "Wrong password");
+            return "cabinet/services";
         }
-        return "cabinet/services";
+
+        //If new passwords do not match
+        if (!changePasswordForm.getNewPass().equals(changePasswordForm.getOneMoreNewPass())) {
+            model.addAttribute("newPassError", "Passwords do not match");
+            return "cabinet/services";
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPass()));
+        userRepository.updatePass(user);
+
+        return "redirect:/cabinet/profile";
     }
 
     @RequestMapping(value = "/cabinet/requests", method = RequestMethod.GET)
@@ -210,8 +220,10 @@ public class CabinetController {
         );
         for (RequestAdditionalServices ras :
                 requestAdditionalServicesRepository.readByConnectionRequestId(requestId)) {
-            requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
+            requestAdditionalServicesRepository.delete(ras.getRequestId().getConnectionRequestId(),
+                    ras.getServiceId().getAdditionalServiceId());
         }
+
         connectionRequest = connectionRequestRepository.update(connectionRequest);
         if (connectionRequestForm.getAdditionalServiceList() != null) {
             for (AdditionalService service :
@@ -233,7 +245,8 @@ public class CabinetController {
             return "redirect:/cabinet/requests";
         for (RequestAdditionalServices ras :
                 requestAdditionalServicesRepository.readByConnectionRequestId(requestId)) {
-            requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
+            requestAdditionalServicesRepository.delete(ras.getRequestId().getConnectionRequestId(),
+                    ras.getServiceId().getAdditionalServiceId());
         }
         ConnectionRequest updatedConnectionRequest = connectionRequest.get();
         updatedConnectionRequest.setStatus(ConnectionRequest.RequestStatusType.REJECTED);
@@ -242,36 +255,35 @@ public class CabinetController {
     }
 
     @RequestMapping(value = "/cabinet/details", method = RequestMethod.GET)
-    public String getUpdateDetailsPage(Model model, Authentication authentication) {
-        User userDetails = (User) authentication.getPrincipal();
-
+    public String getUpdateDetailsPage(Model model) {
         model.addAttribute("newUserDetails", new UserDetailsForm());
-        model.addAttribute("userDetails", new UserDetailsForm(
-                userDetails.getEmail(),
-                userDetails.getFirstname(),
-                userDetails.getSurname(),
-                userDetails.getTelephoneNumber()
-        ));
-
         return "cabinet/details";
     }
 
     @RequestMapping(value = "/cabinet/details", method = RequestMethod.POST)
-    public String processUpdateUserDetails(@ModelAttribute UserDetailsForm newUserDetails,
-                                           Authentication authentication,
+    public String processUpdateUserDetails(@ModelAttribute("newUserDetails") @Valid UserDetailsForm newUserDetails,
+                                           BindingResult bindingResult, Authentication authentication,
                                            Model model) {
+        //If have jakarta.validation errors
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error, {}", bindingResult);
+            model.addAttribute("newUserDetails", newUserDetails);
+            return "cabinet/details";
+        }
+
+        //Check, is old password matches to current
         User userDetails = (User) authentication.getPrincipal();
-        if (!userDetails.getEmail().equals(newUserDetails.getEmail())) {
-            if (userRepository.findByUsername(newUserDetails.getEmail()) != null) {
-                model.addAttribute("error_email", "This email is already taken");
-                model.addAttribute("newUserDetails", new UserDetailsForm());
-                model.addAttribute("userDetails", new UserDetailsForm(
-                        userDetails.getEmail(),
-                        userDetails.getFirstname(),
-                        userDetails.getSurname(),
-                        userDetails.getTelephoneNumber()
-                ));
-            }
+        userDetails = userRepository.findByUsername(userDetails.getUsername());
+        if (!passwordEncoder.matches(newUserDetails.getPassword(), userDetails.getPassword())) {
+            model.addAttribute("passError", "Wrong password");
+            return "cabinet/details";
+        }
+
+        //Check, is new email free
+        if (!userDetails.getEmail().equals(newUserDetails.getEmail()) && userRepository.findByUsername(newUserDetails.getEmail()) != null) {
+            model.addAttribute("error_email", "This email is already taken");
+            model.addAttribute("newUserDetails", newUserDetails);
+            return "cabinet/details";
         }
 
         newUserDetails.setUserId(userDetails.getUserId());

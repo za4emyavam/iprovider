@@ -1,5 +1,6 @@
 package com.example.iprovider.entities.forms;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,11 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @NoArgsConstructor
 public class ChangePasswordForm {
     @NotNull
+    @NotEmpty(message = "Please fill this field")
     private String oldPass;
     @NotNull
     @Size(min = 8, message = "Password must have at least 8 characters")
     private String newPass;
     @NotNull
+    @NotEmpty(message = "Please fill this field")
     private String oneMoreNewPass;
 
     public void encodeAll(PasswordEncoder passwordEncoder) {

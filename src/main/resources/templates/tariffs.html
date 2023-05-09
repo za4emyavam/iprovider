@@ -12,16 +12,41 @@
     <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
     <div class="tariff-content">
         <h1 class="page-name">List of tariffs</h1>
-        <table class="tariffs-table">
+        <div th:each="tariff : ${tariffs}" class="columns">
+            <ul class="price">
+                <li class="header" th:text="${tariff.name}"></li>
+                <li class="grey" th:text="${tariff.cost + ' UAH / ' + tariff.frequencyOfPayment + ' days'}"></li>
+                <li class="desc" th:text="${tariff.description}"></li>
+                <li>
+                    <div th:each="service : ${tariff.getServices()}">
+                        <p th:text="${service.serviceType}"></p>
+                    </div>
+                </li>
+                <li class="grey"><a th:href="@{/tariffs/request(tariffId=${tariff.tariffId})}" class="button">Request</a></li>
+            </ul>
+        </div>
+        <!--<table class="tariffs-table">
             <tr>
-                <th class="tariff-table-th">Id</th>
-                <th class="tariff-table-th">Name</th>
+                <th class="tariff-table-th">
+                    <a th:href="@{/tariffs(page=${pageable.getNumber()},
+                    sort=${pageable.getSort().toString() == ('tariff_id: ASC') ? 'tariff_id: DESC' : 'tariff_id: ASC'})}">
+                        Id
+                    </a>
+                </th>
+                <th class="tariff-table-th">
+                    <a th:href="@{/tariffs(page=${pageable.getNumber()},
+                    sort=${pageable.getSort().toString() == ('name: ASC') ? 'name: DESC' : 'name: ASC'})}">
+                        Name
+                    </a>
                 <th class="tariff-table-th">Description</th>
-                <th class="tariff-table-th">Cost</th>
+                <th class="tariff-table-th">
+                    <a th:href="@{/tariffs(page=${pageable.getNumber()},
+                    sort=${pageable.getSort().toString() == ('cost: ASC') ? 'cost: DESC' : 'cost: ASC'})}">
+                        Cost
+                    </a>
+                </th>
                 <th class="tariff-table-th">Frequency of payment</th>
-                <th class="tariff-table-th">Status</th>
                 <th class="tariff-table-th">Service</th>
-                <th class="tariff-table-th"/>
             </tr>
             <tr th:each="tariff : ${tariffs}">
                 <td class="tariff-table-td" th:text="${tariff.tariffId}"/>
@@ -29,7 +54,6 @@
                 <td class="tariff-table-td" th:text="${tariff.description}"/>
                 <td class="tariff-table-td" th:text="${tariff.cost}"/>
                 <td class="tariff-table-td" th:text="${tariff.frequencyOfPayment}"/>
-                <td class="tariff-table-td" th:text="${tariff.status}"/>
                 <td class="tariff-table-td">
                     <div th:each="service : ${tariff.getServices()}">
                         <p th:text="${service.serviceType}"></p>
@@ -39,36 +63,39 @@
                     <a th:href="@{/tariffs/request(tariffId=${tariff.tariffId})}">request</a>
                 </td>
             </tr>
-        </table>
+        </table>-->
+
+        <br/>
         <!--TODO-->
-        <div th:if="${page != 1}">
-            <a th:href="@{/tariffs(page=${page-1},size=${size})}">Previous</a>
+        <div class="previous" th:if="${pageable.hasPrevious()}">
+            <a th:href="@{/tariffs(page=${pageable.previousPageable().getPageNumber()}, sort=${pageable.getSort()})}">&laquo; Previous</a>
         </div>
-        <div th:if="${page != maxPage}">
-            <a th:href="@{/tariffs(page=${page+1},size=${size})}">Next</a>
+        <div class="next" th:if="${pageable.hasNext()}">
+            <a th:href="@{/tariffs(page=${pageable.nextPageable().getPageNumber()}, sort=${pageable.getSort()})}">Next &raquo;</a>
         </div>
-        <nav class="pagination-container">
-            <!--TODO pagination-->
-            <button th:if="${page != 1}" class="pagination-button" id="prev-button" aria-label="Previous page"
-                    title="Previous page">
-                <a th:href="@{/tariffs(page=${-1+page})}">&lt;</a>
-            </button>
-
-            <div id="pagination-numbers">
-
-            </div>
-
-            <button th:if="${page != maxPage}" class="pagination-button" id="next-button" aria-label="Next page"
-                    title="Next page">
-                <a th:href="@{/tariffs(page=${page+1})}">&gt;</a>
-            </button>
-        </nav>
     </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
-<script>
+<!--<script>
     var maxPage = [[${maxPage}]];
 </script>
-<script th:src="@{/js/pagination.js}"></script>
+<script th:src="@{/js/pagination.js}"></script>-->
+<script>
+    // Получаем все div элементы с классом "my-class"
+    var elements = document.querySelectorAll('.columns');
+
+    // Находим максимальный размер
+    var maxHeight = 0;
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].clientHeight > maxHeight) {
+            maxHeight = elements[i].clientHeight;
+        }
+    }
+
+    // Устанавливаем максимальный размер для всех элементов
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.height = maxHeight + 'px';
+    }
+</script>
 </body>
 </html>

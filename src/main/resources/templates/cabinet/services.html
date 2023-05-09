@@ -4,40 +4,36 @@
     <title>Cabinet</title>
     <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cabinet/services.css}"/>
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="cabinet-container">
-    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
-    </div>
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}"></div>
     <div class="cabinet-content" th:fragment="cabinetContent">
+        <h1 class="page-name">Change password</h1>
         <form action="#" th:action="@{/cabinet/services}" th:object="${changePasswordForm}" method="post">
-            <label for="oldPass">Old pass:</label>
-            <input type="password" th:field="*{oldPass}" id="oldPass"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('oldPass')}" th:errors="*{oldPass}">
-                Old password validation error
-            </span>
-            <span th:if="${msg eq 'oldPassError'}">Wrong password!</span>
-            <br/><br/>
 
-            <label for="newPass">New pass:</label>
-            <input type="password" th:field="*{newPass}" id="newPass"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('newPass')}" th:errors="*{newPass}">
-                New password validation error
-            </span><br/><br/>
-
-            <label for="oneMoreNewPass">Repeat new pass:</label>
-            <input type="password" th:field="*{oneMoreNewPass}" id="oneMoreNewPass"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('oneMoreNewPass')}" th:errors="*{oneMoreNewPass}">
-                Passwords vary
-            </span>
-            <span th:if="${msg eq 'newPassesNotEqual'}">Password does not match</span>
+            <label for="oldPass"><b>Old pass</b></label><br/>
+            <input type="password" th:field="*{oldPass}" id="oldPass"
+                   placeholder="Enter old password"/>
+            <span class="validationError" th:errors="*{oldPass}"></span>
+            <span class="error" th:if="${passError != null}" th:text="${passError}"></span>
             <br/>
 
-            <input type="submit" value="Submit!"/>
+            <label for="newPass"><b>New pass</b></label><br/>
+            <input type="password" th:field="*{newPass}" id="newPass"
+                   placeholder="Enter new password"/>
+            <span class="validationError" th:errors="*{newPass}"></span>
+            <br/>
+
+            <label for="oneMoreNewPass"><b>Repeat new pass</b></label><br/>
+            <input type="password" th:field="*{oneMoreNewPass}" id="oneMoreNewPass"
+                   placeholder="Repeat new password"/>
+            <span class="error" th:if="${newPassError != null}" th:text="${newPassError}"></span>
+            <br/>
+
+            <input class="submitbtn" type="submit" value="Submit!"/>
         </form>
     </div>
 </div>

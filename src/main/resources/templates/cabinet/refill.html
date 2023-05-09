@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Cabinet</title>
-  <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
-  <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <title>Cabinet</title>
+    <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cabinet/refill.css}"/>
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="cabinet-container">
-  <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
-  </div>
-  <div class="cabinet-content" th:fragment="cabinetContent">
-    <h1>Refill</h1>
-    <form action="#" th:action="@{/cabinet/refill}" th:object="${transaction}" method="post">
-      <label for="transactionAmount">Amount: </label>
-      <input type="number" th:field="*{transactionAmount}" id="transactionAmount">
-      <input type="submit" value="Refill"/>
-    </form>
-  </div>
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}"></div>
+    <div class="cabinet-content" th:fragment="cabinetContent">
+        <h1 class="page-name">Refill</h1>
+        <form action="#" th:action="@{/cabinet/refill}" th:object="${transaction}" method="post">
+
+            <label for="transactionAmount"><b>Amount</b></label><br>
+            <input type="number" th:field="*{transactionAmount}" id="transactionAmount"
+                   placeholder="Enter amount">
+            <span class="validationError" th:errors="*{transactionAmount}"></span>
+            <br/>
+
+            <input class="submitbtn" type="submit" value="Refill"/>
+        </form>
+    </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
 </body>

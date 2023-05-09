@@ -1,6 +1,8 @@
 package com.example.iprovider.data;
 
 import com.example.iprovider.entities.Tariff;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -23,13 +25,14 @@ public interface TariffRepository {
      * @return an Iterable containing the requested tariffs, or an empty Iterable if no tariffs were found
      */
     Iterable<Tariff> readAll(int page, int size);
+    Page<Tariff> readAll(Pageable page);
 
     /**
      * Get the total number of tariffs.
      *
      * @return the number of tariffs
      */
-    Integer getAmount();
+    Integer count();
 
     /**
      * Create a new tariff.

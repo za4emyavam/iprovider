@@ -4,22 +4,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A data class representing a request for additional services.
+ * <p>
+ * Each instance contains information about the connection request ID, additional service ID, and status.
+ * <p>
+ * The status can be one of two values: "expected" or "paid".
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestAdditionalServices {
-    private Long requestAdditionalServicesId;
+    /**
+     * The connection request ID associated with this request.
+     */
     private ConnectionRequest requestId;
+    /**
+     * The additional service ID associated with this request.
+     */
     private AdditionalService serviceId;
-
+    /**
+     * The status of this request, which can be "expected" or "paid".
+     */
     private Status status;
 
-    public RequestAdditionalServices(ConnectionRequest requestId, AdditionalService serviceId, Status status) {
-        this.requestId = requestId;
-        this.serviceId = serviceId;
-        this.status = status;
-    }
-
+    /**
+     * An enumeration representing the two possible values for the status of this request.
+     */
     public enum Status {
         expected, paid
     }

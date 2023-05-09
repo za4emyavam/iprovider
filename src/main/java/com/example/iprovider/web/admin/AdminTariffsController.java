@@ -21,7 +21,7 @@ public class AdminTariffsController {
     public void addTariffsToModel(Model model,
                                   @RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "5") int size) {
-        int number = tariffRepository.getAmount();
+        int number = tariffRepository.count();
         int maxPage = (int)Math.ceil(number * 1.0 / size);
         if (page <= 0 || page > maxPage) {
             page = 1;

@@ -9,6 +9,10 @@ import com.example.iprovider.entities.forms.ConnectionRequestForm;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,17 +43,23 @@ public class TariffsController {
 
     @RequestMapping(value = "/tariffs", method = RequestMethod.GET)
     public String tariffsTable(Model model,
-                               @RequestParam(defaultValue = "1") int page,
-                               @RequestParam(defaultValue = "5") int size) {
-        int number = tariffRepository.getAmount();
-        int maxPage = (int) Math.ceil(number * 1.0 / size);
-        if (page <= 0 || page > maxPage) {
-            page = 1;
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("maxPage", maxPage);
-        model.addAttribute("tariffs", tariffRepository.readAll(page, size));
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "6") int size,
+                               @RequestParam(defaultValue = "") String sort) {
+        //TODO Sort или убрать или добавить
+        String[] sortParams = sort.split(": ");
+        Sort s = sortParams.length == 0 || sortParams[0].isEmpty() ?
+                Sort.unsorted()
+                : sortParams.length == 1 ?
+                Sort.by(sortParams[0]) : Sort.by(Direction.valueOf(sortParams[1]), sortParams[0]);
+
+        PageRequest pageRequest = PageRequest.of(page, size, s);
+
+        Page<Tariff> pagedTariffs = tariffRepository.readAll(pageRequest);
+
+        model.addAttribute("pageable", pagedTariffs);
+        model.addAttribute("tariffs", pagedTariffs.getContent());
+        model.addAttribute("max", pagedTariffs.getTotalPages() - 1);
         return "tariffs";
     }
 
@@ -59,8 +69,8 @@ public class TariffsController {
         if (tariff.isEmpty()) {
             return "redirect:/tariffs";
         }
-        ConnectionRequestForm connectionRequest = new ConnectionRequestForm();
-        model.addAttribute("connectionRequest", connectionRequest);
+
+        model.addAttribute("connectionRequest", new ConnectionRequestForm());
         model.addAttribute("tariffId", tariffId);
         model.addAttribute("additionalServices", additionalServiceRepository.readAll());
         return "request";
@@ -90,15 +100,13 @@ public class TariffsController {
         conReq.setTariff(tariff.get());
 
         connectionRequestRepository.create(conReq);
-        //TODO
-        for (AdditionalService service :
-                connectionRequest.getAdditionalServiceList()) {
-            RequestAdditionalServices temp = new RequestAdditionalServices(
-                    conReq, service, RequestAdditionalServices.Status.expected
-            );
-            System.out.println(temp);
-            requestAdditionalServicesRepository.create(temp);
-        }
+
+        connectionRequest.getAdditionalServiceList()
+                .iterator()
+                .forEachRemaining(service -> requestAdditionalServicesRepository.create(
+                        new RequestAdditionalServices(conReq, service, RequestAdditionalServices.Status.expected)
+                ));
+
         return "redirect:/tariffs";
     }
 

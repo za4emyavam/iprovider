@@ -2,10 +2,13 @@ package com.example.iprovider.data;
 
 import com.example.iprovider.entities.UserTariffs;
 
+import java.util.Optional;
+
 /**
  * This interface provides methods to work with user tariffs in the database.
  */
 public interface UserTariffsRepository {
+    Optional<UserTariffs> read(Long userTariffsId);
     /**
      * Retrieves all user tariffs by user ID.
      *
@@ -52,4 +55,5 @@ public interface UserTariffsRepository {
      * @return True if the user tariff was deleted successfully, false otherwise.
      */
     boolean deleteByUserIdTariffId(Long userId, Long tariffId);
+    boolean delete(Long userTariffId);
 }

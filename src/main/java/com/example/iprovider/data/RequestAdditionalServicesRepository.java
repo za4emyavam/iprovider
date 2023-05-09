@@ -17,12 +17,13 @@ public interface RequestAdditionalServicesRepository {
     RequestAdditionalServices create(RequestAdditionalServices requestAdditionalServices);
 
     /**
-     * Read a request for additional services by its ID.
-     *
-     * @param requestAdditionalServicesId the ID of the request for additional services
-     * @return an Optional containing the request for additional services, or an empty Optional if the request was not found
+
+     Reads a request additional services record from the data source by the specified request ID and service ID.
+     @param requestId The ID of the request to search for.
+     @param serviceId The ID of the service to search for.
+     @return An Optional containing the found request additional services record or empty if not found.
      */
-    Optional<RequestAdditionalServices> read(Long requestAdditionalServicesId);
+    Optional<RequestAdditionalServices> read(Long requestId, Long serviceId);
 
     /**
      * Read all requests for additional services for a given connection request.
@@ -41,10 +42,11 @@ public interface RequestAdditionalServicesRepository {
     Iterable<RequestAdditionalServices> readBySubscriberId(Long subscriberId);
 
     /**
-     * Delete a request for additional services by its ID.
-     *
-     * @param requestAdditionalServicesId the ID of the request for additional services to delete
-     * @return true if the request for additional services was successfully deleted, false otherwise
+
+     Deletes a request additional services record from the data source by the specified request ID and service ID.
+     @param requestId The ID of the request to search for.
+     @param serviceId The ID of the service to search for.
+     @return true if the record was deleted successfully, false otherwise.
      */
-    boolean delete(Long requestAdditionalServicesId);
+    boolean delete(Long requestId, Long serviceId);
 }

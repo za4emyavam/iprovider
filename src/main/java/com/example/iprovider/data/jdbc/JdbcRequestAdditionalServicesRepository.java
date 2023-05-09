@@ -5,7 +5,6 @@ import com.example.iprovider.entities.RequestAdditionalServices;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -13,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -41,8 +39,6 @@ public class JdbcRequestAdditionalServicesRepository implements RequestAdditiona
                 Types.INTEGER, Types.INTEGER, Types.VARCHAR
         );
 
-        pscf.setReturnGeneratedKeys(true);
-
         PreparedStatementCreator psc = pscf.newPreparedStatementCreator(
                 Arrays.asList(
                         requestAdditionalServices.getRequestId().getConnectionRequestId(),
@@ -50,23 +46,19 @@ public class JdbcRequestAdditionalServicesRepository implements RequestAdditiona
                         requestAdditionalServices.getStatus()
                 )
         );
-
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(psc, keyHolder);
-
-        long requestAdditionalServiceId = Long.parseLong(Objects.requireNonNull(keyHolder.getKeys()).
-                get("request_additional_services_id").toString());
-        requestAdditionalServices.setRequestAdditionalServicesId(requestAdditionalServiceId);
-
+        
+        jdbcTemplate.update(psc);
+        
         return requestAdditionalServices;
     }
 
     @Override
-    public Optional<RequestAdditionalServices> read(Long requestAdditionalServicesId) {
+    public Optional<RequestAdditionalServices> read(Long requestId, Long serviceId) {
         List<RequestAdditionalServices> results = jdbcTemplate.query(
-                "select * from request_additional_services where request_additional_services_id = (?)",
+                "select * from request_additional_services where request_id = (?) and " +
+                        "services_id = (?)",
                 this::mapToRowRequestAdditionalServices,
-                requestAdditionalServicesId);
+                requestId, serviceId);
         return results.size() == 0 ? Optional.empty() : Optional.of(results.get(0));
     }
 
@@ -92,16 +84,16 @@ public class JdbcRequestAdditionalServicesRepository implements RequestAdditiona
     }
 
     @Override
-    public boolean delete(Long requestAdditionalServicesId) {
+    public boolean delete(Long requestId, Long serviceId) {
         return jdbcTemplate.update(
-                "delete from request_additional_services where request_additional_services_id=?",
-                requestAdditionalServicesId
+                "delete from request_additional_services where request_id =? and " +
+                        "services_id = ?",
+                requestId, serviceId
         ) == 1;
     }
 
     private RequestAdditionalServices mapToRowRequestAdditionalServices(ResultSet row, int rowNum) throws SQLException {
         RequestAdditionalServices res = new RequestAdditionalServices();
-        res.setRequestAdditionalServicesId(row.getLong("request_additional_services_id"));
         res.setRequestId(jdbcConnectionRequestRepository.read(row.getLong("request_id")).get());
         res.setServiceId(jdbcAdditionalServiceRepository.read(row.getLong("services_id")).get());
         res.setStatus(RequestAdditionalServices.Status.valueOf(row.getString("status")));

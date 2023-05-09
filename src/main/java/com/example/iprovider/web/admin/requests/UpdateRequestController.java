@@ -67,7 +67,8 @@ public class UpdateRequestController {
         if (request.getStatus() == ConnectionRequest.RequestStatusType.REJECTED) {
             for (RequestAdditionalServices ras :
                     requestAdditionalServicesRepository.readByConnectionRequestId(requestId)) {
-                requestAdditionalServicesRepository.delete(ras.getRequestAdditionalServicesId());
+                requestAdditionalServicesRepository.delete(ras.getRequestId().getConnectionRequestId(),
+                        ras.getServiceId().getAdditionalServiceId());
             }
         }
         connectionRequestRepository.update(request);

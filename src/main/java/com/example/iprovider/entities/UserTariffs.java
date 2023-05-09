@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class UserTariffs {
-    private Long user_tariffs_id;
+    private Long userTariffsId;
     private final User userId;
     private final Tariff tariffId;
     private final Date dateOfStart;
