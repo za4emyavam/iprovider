@@ -5,49 +5,54 @@
     <title>Cabinet</title>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
     <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cabinet/requests/update.css}">
 </head>
 <body>
 
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="cabinet-container">
-    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}">
-    </div>
+    <div class="cabinet-sidebar" th:insert="~{cabinet.html :: cabinetSideBar}"></div>
     <div class="cabinet-content" th:fragment="cabinetContent">
+        <h1 class="page-name">Update request</h1>
         <form action="#" th:object="${connectionRequestForm}" method="post"
               th:action="@{/cabinet/requests/update(requestId=${currentConnectionRequest.connectionRequestId})}">
-            <label for="city">City:</label>
+
+            <label for="city"><b>City</b></label><br/>
             <input type="text" th:field="*{city}" name="city" id="city"
                    th:placeholder="${currentConnectionRequest.city}">
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('city')}" th:errors="*{city}">
-              City validation error
-            </span><br/>
+            <span class="validationError" th:errors="*{city}"></span><br/>
 
-            <label for="address">Address:</label>
+            <label for="address"><b>Address</b></label><br/>
             <input type="text" th:field="*{address}" name="address" id="address"
                    th:placeholder="${currentConnectionRequest.address}">
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('address')}" th:errors="*{address}">
-              Address validation error
-            </span><br/>
+            <span class="validationError" th:errors="*{address}"></span><br/>
 
-            <label>Tariff</label>
-            <div class="radio-tariff" th:each="tariff : ${tariffList}">
-                <input type="radio" th:field="*{tariff}" name="tariff" th:value="${tariff.tariffId}"
-                       th:id="'tariff_' + ${tariff.tariffId}" th:text="${tariff.name}"><br/>
+            <label><b>Tariff</b></label><br/>
+            <div class="radio-tariffs" th:each="tariff : ${tariffList}">
+                <label class="radio-container">
+                    <label class="radio-text" th:text="${tariff.name}"></label>
+                    <input type="radio" th:field="*{tariff}" name="radio" th:value="${tariff.tariffId}"
+                           th:id="'tariff_' + ${tariff.tariffId}"><br/>
+                    <span class="radio"></span>
+                </label>
             </div>
 
-            <label>Additional service(s):</label><br/>
+            <label><b>Additional services <a th:href="@{/services}" target="_blank">(See All)</a>: </b></label><br/>
             <div class="checkboxes-services" th:each="service : ${addServices}">
-                <input th:field="*{additionalServiceList}" type="checkbox" th:value="${service.additionalServiceId}"
-                       th:id="'service_' + ${service.additionalServiceId}"/>
-                <span th:text="${service.name}">SERVICE</span><br/>
+                <label class="check-container">
+                    <label class="check-text" th:text="${service.name}"></label>
+                    <input th:field="*{additionalServiceList}" type="checkbox"
+                           th:value="${service.additionalServiceId}"
+                           th:id="'service_' + ${service.additionalServiceId}">
+                    <span class="checkmark"></span><br/>
+                </label>
             </div>
 
-            <input type="submit" value="Update request">
+            <input class="submitbtn" type="submit" value="Update request">
         </form>
     </div>
 </div>
+
 <footer class="footer" th:insert="~{template.html :: footerFragment}"></footer>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>
 <script>
@@ -58,7 +63,7 @@
     document.getElementById("tariff_" + currentTariff).checked = true;
 
     for (var i in list) {
-        document.getElementById("service_" + list[i]).click();
+        document.getElementById("service_" + list[i]).checked = true;
     }
 
 </script>

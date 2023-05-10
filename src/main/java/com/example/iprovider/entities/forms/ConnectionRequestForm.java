@@ -35,6 +35,7 @@ public class ConnectionRequestForm implements Serializable {
     @NotEmpty(message = "Address can't be empty")
     private String address;
 
+    @NotNull
     private Tariff tariff;
 
     private List<AdditionalService> additionalServiceList;

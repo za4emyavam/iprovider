@@ -206,9 +206,34 @@ public class CabinetController {
 
     @RequestMapping(value = "/cabinet/requests/update", method = RequestMethod.POST)
     public String processUpdateRequest(@RequestParam Long requestId,
-                                       @ModelAttribute ConnectionRequestForm connectionRequestForm, Model model,
+                                       @ModelAttribute("connectionRequestForm") @Valid ConnectionRequestForm connectionRequestForm,
+                                       BindingResult bindingResult,
+                                       Model model,
                                        Authentication authentication) {
         User userDetails = (User) authentication.getPrincipal();
+
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error: {}", bindingResult);
+
+            Optional<ConnectionRequest> connectionRequest = connectionRequestRepository.read(requestId);
+            if (connectionRequest.isEmpty() ||
+                    connectionRequest.get().getStatus() != ConnectionRequest.RequestStatusType.IN_PROCESSING ||
+                    !Objects.equals(connectionRequest.get().getSubscriber(), userDetails.getUserId()))
+                return "redirect:/cabinet/requests";
+
+            List<Long> additionalServicesId = new ArrayList<>();
+            requestAdditionalServicesRepository.readByConnectionRequestId(connectionRequest.get().getConnectionRequestId())
+                    .forEach(r -> additionalServicesId.add(r.getServiceId().getAdditionalServiceId()));
+
+            model.addAttribute("currentConnectionRequest", connectionRequest.get());
+            model.addAttribute("currentAddServices", additionalServicesId);
+            model.addAttribute("tariffList", tariffRepository.readAll());
+            model.addAttribute("addServices", additionalServiceRepository.readAll());
+            model.addAttribute("connectionRequestForm", connectionRequestForm);
+
+            return "cabinet/requests/update";
+        }
+
         ConnectionRequest connectionRequest = new ConnectionRequest(
                 requestId,
                 userDetails.getUserId(),
@@ -233,8 +258,6 @@ public class CabinetController {
                 ));
             }
         }
-
-        //TODO Validation
         return "redirect:/cabinet/requests";
     }
 

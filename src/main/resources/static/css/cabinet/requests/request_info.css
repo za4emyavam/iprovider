@@ -1,0 +1,28 @@
+.updatebtn {
+    background-color: #4CAF50;
+    padding: 15px 18px; /*отступы внутри*/
+    text-decoration: none; /*убрать подчеркивание ссылки*/
+    opacity: 0.9;
+    margin: 8px 0;
+    border: none;
+    color: white;
+}
+
+.updatebtn:hover {
+    opacity: 1;
+}
+
+.deletebtn {
+    background-color: indianred;
+    color: white;
+    padding: 15px 18px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.deletebtn:hover {
+    opacity: 1;
+}
