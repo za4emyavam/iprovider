@@ -4,6 +4,9 @@ import com.example.iprovider.data.UserRepository;
 import com.example.iprovider.entities.User;
 import com.example.iprovider.entities.forms.SortUserStatisticsForm;
 import com.example.iprovider.entities.forms.UserDetailsForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -92,6 +95,16 @@ public class JdbcUserRepository implements UserRepository {
         return jdbcTemplate.query(
                 "select * from \"user\" order by user_id limit ? offset ?",
                 this::mapRowToUserWithoutPass, size, offset);
+    }
+
+    @Override
+    public Page<User> readAll(PageRequest pageRequest) {
+        List<User> users = jdbcTemplate.query(
+                "select * from \"user\" order by user_id limit ? offset ?",
+                this::mapRowToUserWithoutPass,
+                pageRequest.getPageSize(),
+                pageRequest.getOffset());
+        return new PageImpl<>(users, pageRequest, getAmount());
     }
 
     @Override

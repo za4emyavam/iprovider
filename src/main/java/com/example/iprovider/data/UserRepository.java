@@ -3,6 +3,8 @@ package com.example.iprovider.data;
 import com.example.iprovider.entities.User;
 import com.example.iprovider.entities.forms.SortUserStatisticsForm;
 import com.example.iprovider.entities.forms.UserDetailsForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
 
@@ -49,6 +51,7 @@ public interface UserRepository {
      * @return an Iterable containing the requested users, or an empty Iterable if no users were found
      */
     Iterable<User> readAll(int page, int size);
+    Page<User> readAll(PageRequest pageRequest);
 
     /**
      * Read all users that have tariffs, sorted according to a specified form.

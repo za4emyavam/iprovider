@@ -11,36 +11,42 @@
 <div class="admin-container">
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
     <div class="admin-content" th:fragment="adminContent">
+        <h1 class="page-name">User Info</h1>
         <div>
-            <p>User id: <span th:text="${user.userId}"/></p>
-            <p>Email: <span th:text="${user.email}"/></p>
-            <p>Full name: <span th:text="${user.firstname + ' ' + user.surname}"/></p>
-            <p>Role: <span th:text="${user.userRole}"/></p>
+            <p><b>User id:</b> <span th:text="${user.userId}"/></p>
+            <p><b>Email:</b> <span th:text="${user.email}"/></p>
+            <p><b>Full name:</b> <span th:text="${user.firstname + ' ' + user.surname}"/></p>
+            <p><b>Role:</b> <span th:text="${user.userRole}"/></p>
             <form sec:authorize="hasRole('MAIN_ADMIN')" action="#"
                   th:action="@{/admin/users/user_info(userId=${user.userId},command='role')}" method="post" th:object="${userInfoForm}">
-                <select th:field="*{value}">
+                <label for="role"><b>Change role: </b></label>
+                <select class="select-input" th:field="*{value}" id="role">
                     <option th:value="ADMIN" th:text="Admin"/>
                     <option th:value="USER" th:text="User"/>
                 </select>
-                <input type="submit" value="Update user role"/>
+                <br/>
+                <input class="submitbtn" style="width: 20%" type="submit" value="Update user role"/>
             </form>
-            <p>Status: <span th:text="${user.userStatus}"/></p>
+            <p><b>Status:</b> <span th:text="${user.userStatus}"/></p>
+
             <form action="#"
                   th:action="@{/admin/users/user_info(userId=${user.userId},command='status')}" method="post" th:object="${userInfoForm}">
-                <select th:field="*{value}">
+                <label for="status"><b>Change status: </b></label>
+                <select class="select-input" th:field="*{value}" id="status">
                     <option th:value="SUBSCRIBED" th:text="Subscribed"/>
                     <option th:value="BLOCKED" th:text="Blocked"/>
                 </select>
-                <input type="submit" value="Update user status"/>
+                <br/>
+                <input class="submitbtn" type="submit" value="Update user status" style="width: 20%"/>
             </form>
-            <p>Balance: <span th:text="${user.userBalance}"/></p>
-            <p>Phone number: <span th:text="${user.telephoneNumber}"/></p>
-            <p>Registration date: <span th:text="${#dates.format(user.registrationDate, 'dd-MM-yyyy')}"/></p>
+            <p><b>Balance:</b> <span th:text="${user.userBalance}"/></p>
+            <p><b>Phone number:</b> <span th:text="${user.telephoneNumber}"/></p>
+            <p><b>Registration date:</b> <span th:text="${#dates.format(user.registrationDate, 'dd-MM-yyyy')}"/></p>
             <div th:if="${userTariffs.size() == 0}">
-                <p>Has no tariffs</p>
+                <p><b>Has no tariffs</b></p>
             </div>
             <div th:if="${userTariffs.size() != 0}">
-                <p>Connected Tariffs:</p>
+                <p><b>Connected Tariffs:</b></p>
                 <table class="tariffs-table">
                     <tr>
                         <th class="tariff-table-th">Id</th>
@@ -51,7 +57,6 @@
                         <th class="tariff-table-th">Service</th>
                         <th class="tariff-table-th">Date Of Start</th>
                         <th class="tariff-table-th">Date Of last payment</th>
-                        <th class="tariff-table-th"></th>
                     </tr>
                     <tr th:each="tariff : ${userTariffs}">
                         <td class="tariff-table-td" th:text="${tariff.tariffId.tariffId}"/>
@@ -66,20 +71,20 @@
                         </td>
                         <td class="tariff-table-td" th:text="${#dates.format(tariff.dateOfStart, 'dd-MM-yyyy')}"/>
                         <td class="tariff-table-td" th:text="${tariff.dateOfLastPayment}"/>
-                        <td class="tariff-table-td">
+                        <td class="tariff-table-td" style="padding: 0">
                             <form action="#"
                                   th:action="@{/admin/users/user_info/delete}" th:object="${deleteTariffFromUserForm}"
                                   method="post">
                                 <input type="hidden" th:value="${user.userId}" name="userId"/>
                                 <input type="hidden" th:value="${tariff.tariffId.tariffId}" name="tariffId"/>
-                                <input type="submit" value="Unsubscribe"/>
+                                <input class="unsubbtn" type="submit" value="Unsubscribe"/>
                             </form>
                         </td>
                     </tr>
                 </table><br/>
             </div>
             <div th:if="${!additionalServices.isEmpty()}">
-                <p>Additional services:</p>
+                <p><b>Additional services:</b></p>
                 <table class="tariffs-table">
                     <tr>
                         <th class="tariff-table-th">Connection Request Id</th>

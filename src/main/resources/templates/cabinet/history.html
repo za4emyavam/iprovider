@@ -28,12 +28,16 @@
         <td class="transaction-table-td" th:text="${transaction.transactionStatus.name()}"/>
       </tr>
     </table>
-  </div>
-  <div th:if="${page != 1}">
-    <a th:href="@{/cabinet/history(page=${page-1},size=${size})}">Previous</a>
-  </div>
-  <div th:if="${page != maxPage}">
-    <a th:href="@{/cabinet/history(page=${page+1},size=${size})}">Next</a>
+    <br/>
+    <div class="previous" th:if="${pageable.hasPrevious()}">
+      <a th:href="@{/cabinet/history(page=${pageable.previousPageable().getPageNumber()})}">
+        &laquo; Previous</a>
+    </div>
+    <div class="next" th:if="${pageable.hasNext()}">
+      <a th:href="@{/cabinet/history(page=${pageable.nextPageable().getPageNumber()})}">
+        Next &raquo;
+      </a>
+    </div>
   </div>
 </div>
 <div th:insert="~{template.html :: headerScriptFragment}"></div>

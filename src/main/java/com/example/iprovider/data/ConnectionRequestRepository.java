@@ -1,6 +1,8 @@
 package com.example.iprovider.data;
 
 import com.example.iprovider.entities.ConnectionRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
 
@@ -39,6 +41,7 @@ public interface ConnectionRequestRepository {
      * @return an Iterable containing all connection requests, or an empty Iterable if no connection requests were found
      */
     Iterable<ConnectionRequest> readAll();
+    Page<ConnectionRequest> readAll(PageRequest pageRequest);
 
     /**
      * Read all connection requests with pagination.

@@ -1,0 +1,9 @@
+server:
+  port: 8081
+spring:
+  thymeleaf:
+    cache: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/iprovider
+    username: postgres
+    password: admin

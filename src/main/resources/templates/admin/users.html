@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Admin Panel</title>
-    <link rel="stylesheet" th:href="@{/css/admin/tariffs.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
@@ -12,34 +11,36 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
-        <h1>Users</h1>
+        <h1 class="page-name">Users</h1>
         <table class="users-table">
             <tr>
                 <th class="user-table-th">UserID</th>
                 <th class="user-table-th">Email</th>
                 <th class="user-table-th">Role</th>
                 <th class="user-table-th">Status</th>
-                <th class="user-table-th"></th>
             </tr>
             <tr th:each="user : ${users}">
                 <td class="user-table-td" th:text="${user.userId}"/>
                 <td class="user-table-td" th:text="${user.email}"/>
                 <td class="user-table-td" th:text="${user.userRole}"/>
                 <td class="user-table-td" th:text="${user.userStatus}"/>
-                <td class="user-table-td-td">
-                    <!--<form method="get" th:action="@{/admin/tariffs/update(tariffId=${tariff.tariffId})}" id="updateTariff">
-                      <input type="submit" id="update" name="update" value="Update"/>
-                    </form>-->
-                    <a th:href="@{/admin/users/user_info(userId=${user.userId})}">more info</a>
+                <td class="user-table-td" style="padding: 0">
+                    <a class="infobtn" th:href="@{/admin/users/user_info(userId=${user.userId})}">
+                        More info
+                    </a>
                 </td>
             </tr>
         </table>
-        <!--TODO-->
-        <div th:if="${page != 1}">
-            <a th:href="@{/admin/users(page=${page-1},size=${size})}">Previous</a>
+        <br/>
+        <div class="previous" th:if="${pageable.hasPrevious()}">
+            <a th:href="@{/admin/users(page=${pageable.previousPageable().getPageNumber()})}">
+                &laquo; Previous
+            </a>
         </div>
-        <div th:if="${page != maxPage}">
-            <a th:href="@{/admin/users(page=${page+1},size=${size})}">Next</a>
+        <div class="next" th:if="${pageable.hasNext()}">
+            <a th:href="@{/admin/users(page=${pageable.nextPageable().getPageNumber()})}">
+                Next &raquo;
+            </a>
         </div>
     </div>
 </div>

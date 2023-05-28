@@ -11,21 +11,26 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
-        <h1>Users stat</h1>
+        <h1 class="page-name">Users statistics</h1>
         <div class="sort-table">
             <form th:action="@{/admin/statistics/users}" method="get" th:object="${sortUserStatisticsForm}">
-                <label for="address">Address: </label>
-                <input type="text" id="address" th:field="*{address}">
-                <label for="tariff">Tariff: </label>
+
+                <label for="address"><b>Address</b></label><br/>
+                <input type="text" id="address" th:field="*{address}" placeholder="Address"><br/>
+
+                <label for="tariff"><b>Tariff</b></label>
                 <select th:field="*{tariff}" id="tariff">
                     <option value="0">Any</option>
                     <option th:each="tariff : ${tariffs}" th:value="${tariff.tariffId}" th:text="${tariff.name}"/>
-                </select>
-                <label for="dateOfStartPeriod">Date of start: </label>
-                <input type="date" id="dateOfStartPeriod" th:field="*{dateOfStartPeriod}"/>
-                <label for="dateOfEndPeriod">Date of end period: </label>
-                <input type="date" id="dateOfEndPeriod" th:field="*{dateOfEndPeriod}"/>
-                <input type="submit" value="Sort"/>
+                </select><br/><br/>
+
+                <label for="dateOfStartPeriod"><b>Date of start</b></label>
+                <input type="date" id="dateOfStartPeriod" th:field="*{dateOfStartPeriod}"/><br/><br/>
+
+                <label for="dateOfEndPeriod"><b>Date of end period</b></label>
+                <input type="date" id="dateOfEndPeriod" th:field="*{dateOfEndPeriod}"/><br/><br/>
+
+                <input class="submitbtn" type="submit" value="Sort" style="width: 180px; height: 40px"/>
             </form>
         </div>
         <table>
@@ -34,18 +39,14 @@
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
-                <th>More</th>
             </tr>
             <tr th:each="user : ${userList}">
                 <td th:text="${user.userId}">userId</td>
                 <td th:text="${user.username}">username</td>
                 <td class="user-table-td" th:text="${user.userRole}">role</td>
                 <td class="user-table-td" th:text="${user.userStatus}">status</td>
-                <td class="user-table-td-td">
-                    <!--<form method="get" th:action="@{/admin/tariffs/update(tariffId=${tariff.tariffId})}" id="updateTariff">
-                      <input type="submit" id="update" name="update" value="Update"/>
-                    </form>-->
-                    <a th:href="@{/admin/users/user_info(userId=${user.userId})}">more info</a>
+                <td class="user-table-td-td" style="padding: 0">
+                    <a class="infobtn" th:href="@{/admin/users/user_info(userId=${user.userId})}">User info</a>
                 </td>
             </tr>
         </table>

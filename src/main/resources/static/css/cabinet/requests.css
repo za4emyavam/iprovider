@@ -1,0 +1,19 @@
+.td-btn {
+    padding: 1px;
+}
+.infobtn {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.infobtn:hover {
+    opacity: 1.0;
+}

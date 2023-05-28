@@ -11,33 +11,37 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
     <div class="admin-content" th:fragment="adminContent">
         <div>
-            <p>Request id: <span th:text="${connectionRequest.connectionRequestId}"/></p>
-            <p>Subscriber id: <span th:text="${subscriber.userId}"/></p>
-            <p>Email: <span th:text="${subscriber.email}"/></p>
-            <p>Full name: <span th:text="${subscriber.firstname + ' ' + subscriber.surname}"/></p>
-            <p>Status: <span th:text="${subscriber.userStatus}"/></p>
-            <p>Balance: <span th:text="${subscriber.userBalance}"/></p>
-            <p>Phone number: <span th:text="${subscriber.telephoneNumber}"/></p>
-            <p>City: <span th:text="${connectionRequest.city}"/></p>
-            <p>Address: <span th:text="${connectionRequest.address}"/></p>
-            <p>Date of request: <span th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}"/></p>
-            <p>Request status: <span th:text="${connectionRequest.status}"/></p>
-            <p>Tariff: <span th:text="${connectionRequest.tariff.name}"/></p>
+            <h1 class="page-name">Update request</h1>
+            <p><b>Request id:</b> <span th:text="${connectionRequest.connectionRequestId}"/></p>
+            <p><b>Subscriber id:</b> <span th:text="${subscriber.userId}"/></p>
+            <p><b>Email:</b> <span th:text="${subscriber.email}"/></p>
+            <p><b>Full name:</b> <span th:text="${subscriber.firstname + ' ' + subscriber.surname}"/></p>
+            <p><b>Status:</b> <span th:text="${subscriber.userStatus}"/></p>
+            <p><b>Balance:</b> <span th:text="${subscriber.userBalance}"/></p>
+            <p><b>Phone number:</b> <span th:text="${subscriber.telephoneNumber}"/></p>
+            <p><b>City:</b> <span th:text="${connectionRequest.city}"/></p>
+            <p><b>Address:</b> <span th:text="${connectionRequest.address}"/></p>
+            <p>
+                <b>Date of request:</b> <span th:text="${#dates.format(connectionRequest.dateOfChange, 'dd-MM-yyyy')}"/>
+            </p>
+            <p><b>Request status:</b> <span th:text="${connectionRequest.status}"/></p>
+            <p><b>Tariff:</b> <span th:text="${connectionRequest.tariff.name}"/></p>
             <div th:if="${!additionalServices.isEmpty()}">
-                <p>Additional services: </p>
+                <p><b>Additional services:</b></p>
                 <ul th:each="service : ${additionalServices}">
                     <li th:text="${service.serviceId.name}"></li>
                 </ul>
-
             </div>
         </div>
+        <p><b>Update request status: </b>
         <form th:if="${connectionRequest.status.name() == 'IN_PROCESSING' || connectionRequest.status.name() == 'APPROVED'}"
               action="#"
               th:action="@{/admin/requests/update(requestId=${connectionRequest.connectionRequestId})}" method="post">
             <select name="status" id="status-select">
                 <option th:each="status : ${statuses}" th:value="${status.name()}" th:text="${status}"/>
             </select>
-            <input type="submit" value="Update request"/>
+            <br/>
+            <input class="submitbtn" type="submit" value="Update request"/>
         </form>
     </div>
 </div>

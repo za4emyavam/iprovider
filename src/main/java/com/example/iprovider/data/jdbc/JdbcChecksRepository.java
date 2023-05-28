@@ -2,6 +2,9 @@ package com.example.iprovider.data.jdbc;
 
 import com.example.iprovider.data.ChecksRepository;
 import com.example.iprovider.entities.Checks;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -23,11 +26,23 @@ public class JdbcChecksRepository implements ChecksRepository {
     public Iterable<Checks> readAll(int page, int size) {
         int offset = (page - 1) * size;
         return jdbcTemplate.query(
-                "select * from checks limit ? offset ?",
+                "select * from checks order by date_of_check desc limit ? offset ?",
                 this::mapRowToChecks,
                 size,
                 offset
         );
+    }
+
+    @Override
+    public Page<Checks> readAll(PageRequest pageRequest) {
+        List<Checks> checks = jdbcTemplate.query(
+                "select * from checks order by date_of_check desc limit ? offset ?",
+                this::mapRowToChecks,
+                pageRequest.getPageSize(),
+                pageRequest.getOffset()
+        );
+
+        return new PageImpl<>(checks, pageRequest, getAmount());
     }
 
     @Override

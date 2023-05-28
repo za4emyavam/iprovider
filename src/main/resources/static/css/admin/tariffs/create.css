@@ -1,86 +1,3 @@
-/* Admin header */
-.admin-header {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-}
-
-.admin-header h1 {
-    margin: 0;
-    font-size: 36px;
-}
-
-/* Admin container */
-.admin-container {
-    display: flex;
-}
-
-/* Admin sidebar */
-.admin-sidebar {
-    flex: 1;
-    background-color: #f2f2f2;
-    padding: 20px;
-}
-
-.admin-sidebar ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.admin-sidebar ul li {
-    margin: 10px 0;
-}
-
-.admin-sidebar ul li a {
-    color: #333333;
-    text-decoration: none;
-}
-
-/* Admin content */
-.admin-content {
-    flex: 3;
-    padding: 20px;
-}
-
-.infobtn {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    text-decoration: none;
-    opacity: 0.9;
-}
-
-.infobtn:hover {
-    opacity: 1.0;
-}
-
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
 .submitbtn {
     background-color: #4CAF50;
     color: white;
@@ -93,22 +10,6 @@ tr:nth-child(even) {
 }
 
 .submitbtn:hover {
-    opacity:1;
-}
-
-.deletebtn {
-    width: 100%;
-    height: 100%;
-    background-color: indianred;
-    color: white;
-    padding: 15px 18px;
-    border: none;
-    cursor: pointer;
-    opacity: 0.9;
-    font-size: 16px;
-}
-
-.deletebtn:hover {
     opacity: 1;
 }
 
@@ -116,7 +17,13 @@ tr:nth-child(even) {
     color: red;
 }
 
-* {box-sizing: border-box}
+.validationError {
+    color: darkred;
+}
+
+* {
+    box-sizing: border-box
+}
 
 
 /* Full-width input fields */
@@ -132,67 +39,6 @@ input[type=text], input[type=number] {
 input[type=text]:focus {
     background-color: #ddd;
     outline: none;
-}
-
-/* Overwrite default styles of hr */
-hr {
-    border: 1px solid #f1f1f1;
-    margin-bottom: 25px;
-}
-
-.validationError {
-    color: darkred;
-}
-
-a {
-    text-decoration: none;
-}
-
-.next a, .previous a {
-    text-decoration: none;
-    display: inline-block;
-    padding: 8px 16px;
-}
-
-.next a:hover, .previous a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-.previous {
-    background-color: #f1f1f1;
-    color: black;
-    display: inline-block;
-}
-
-.next {
-    background-color: #4CAF50;
-    color: white;
-    display: inline-block;
-}
-
-.next a:visited, .previous a:visited {
-    color: inherit;
-}
-
-.unsubbtn {
-    width: 100%;
-    height: 100%;
-    background-color: indianred;
-    color: white;
-    padding: 15px 18px;
-    border: none;
-    cursor: pointer;
-    opacity: 0.9;
-    font-size: 16px;
-}
-
-.unsubbtn:hover {
-    opacity: 1;
-}
-
-.select-input {
-    font-size: 18px;
 }
 
 /* Overwrite default styles of hr */

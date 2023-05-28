@@ -50,23 +50,3 @@ body {
     flex: 3;
     padding: 20px;
 }
-
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}

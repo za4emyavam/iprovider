@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Admin Panel</title>
-    <link rel="stylesheet" th:href="@{/css/admin/tariffs.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
@@ -12,7 +11,7 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
-        <h1>User tariffs requests</h1>
+        <h1 class="page-name">User tariffs requests</h1>
         <table class="tariffs-table">
             <tr>
                 <th class="tariff-table-th">Request id</th>
@@ -20,7 +19,6 @@
                 <th class="tariff-table-th">Tariff</th>
                 <th class="tariff-table-th">Date</th>
                 <th class="tariff-table-th">Status</th>
-                <th class="tariff-table-th"></th>
             </tr>
             <tr th:each="request : ${requests}">
                 <td class="tariff-table-td" th:text="${request.connectionRequestId}"/>
@@ -28,16 +26,24 @@
                 <td class="tariff-table-td" th:text="${request.tariff.name}"/>
                 <td class="tariff-table-td" th:text="${#dates.format(request.dateOfChange, 'dd-MM-yyyy')}"/>
                 <td class="tariff-table-td" th:text="${request.status}"/>
-                <td class="tariff-table-td">
-                    <a th:href="@{/admin/requests/update(requestId=${request.connectionRequestId})}">Update</a>
+                <td class="tariff-table-td" style="padding: 0">
+                    <a class="infobtn"
+                       th:href="@{/admin/requests/update(requestId=${request.connectionRequestId})}">
+                        Update
+                    </a>
                 </td>
             </tr>
         </table>
-        <div th:if="${page != 1}">
-            <a th:href="@{/admin/requests(page=${page-1},size=${size})}">Previous</a>
+        <br/>
+        <div class="previous" th:if="${pageable.hasPrevious()}">
+            <a th:href="@{/admin/requests(page=${pageable.previousPageable().getPageNumber()})}">
+                &laquo; Previous
+            </a>
         </div>
-        <div th:if="${page != maxPage}">
-            <a th:href="@{/admin/requests(page=${page+1},size=${size})}">Next</a>
+        <div class="next" th:if="${pageable.hasNext()}">
+            <a th:href="@{/admin/requests(page=${pageable.nextPageable().getPageNumber()})}">
+                Next &raquo;
+            </a>
         </div>
     </div>
 </div>

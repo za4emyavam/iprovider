@@ -9,6 +9,8 @@ import com.example.iprovider.entities.forms.DeleteTariffFromUserForm;
 import com.example.iprovider.entities.forms.UserInfoForm;
 import com.example.iprovider.entities.UserTariffs;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,17 +39,15 @@ public class UsersController {
 
     @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
     public String getUsersPage(Model model,
-                               @RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "5") int size) {
-        int amount = userRepository.getAmount();
-        int maxPage = (int)Math.ceil(amount * 1.0 / size);
-        if (page <= 0 || page > maxPage) {
-            page = 1;
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("maxPage", maxPage);
-        model.addAttribute("users", userRepository.readAll(page, size));
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> pagedUsers = userRepository.readAll(pageRequest);
+
+        model.addAttribute("pageable", pagedUsers);
+        model.addAttribute("users", pagedUsers.getContent());
+        model.addAttribute("maxPage", pagedUsers.getTotalPages() - 1);
+
         return "admin/users";
     }
 

@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,9 +37,18 @@ public class CreateTariffController {
     }
 
     @PostMapping
-    public String addTariff(@ModelAttribute @Valid Tariff tariff, Errors errors) {
-        if (errors.hasErrors()) {
-            log.error("Validation error: {}", errors);
+    public String addTariff(@ModelAttribute("tariff") @Valid Tariff tariff, BindingResult bindingResult,
+                            Model model) {
+        for (Tariff t : tariffRepository.readAll()) {
+            if (t.getName().equals(tariff.getName()) && t.getTariffId() != tariff.getTariffId()) {
+                model.addAttribute("tariff", tariff);
+                model.addAttribute("nameError", "Tariffs with this name already exists");
+                return "admin/tariffs/create";
+            }
+        }
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error: {}", bindingResult);
+            model.addAttribute("tariff", tariff);
             return "admin/tariffs/create";
         }
         tariffRepository.create(tariff);

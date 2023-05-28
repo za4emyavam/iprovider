@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,10 +43,20 @@ public class AdminServiceController {
     }
 
     @RequestMapping(value = "/admin/services/create", method = RequestMethod.POST)
-    public String processCreateService(@ModelAttribute @Valid Service service, Errors errors) {
-        if (errors.hasErrors()) {
-            log.error("Validation error: {}", errors);
+    public String processCreateService(@ModelAttribute @Valid Service service,
+                                       BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error: {}", bindingResult);
             return "admin/services/create";
+        }
+        Iterable<Service> services = serviceRepository.readAll();
+        for (Service s :
+                services) {
+           if (s.getServiceType().equals(service.getServiceType())) {
+               model.addAttribute("error", "Service with this name already exist.");
+               return "admin/services/create";
+           }
+
         }
         serviceRepository.create(service);
         return "redirect:/admin/services";

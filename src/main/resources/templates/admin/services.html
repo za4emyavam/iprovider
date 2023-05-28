@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
@@ -12,31 +11,29 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
+        <h1 class="page-name">List of services</h1>
+
         <form method="get" th:action="@{/admin/services/create}" id="createService">
-            <input type="submit" id="create" name="create" value="Create new service"/>
+            <input class="submitbtn" type="submit" id="create" name="create" value="Create new service" style="width: 200px"/>
         </form>
-        <div class="alert-msg" th:if="${error}">
-            <br/>
-            Tariffs are connected to the service. First remove the connected tariffs, then the service.
-            <br/>
-        </div>
+
         <table class="services-table">
             <tr>
                 <th class="services-table-th">Id</th>
                 <th class="services-table-th">Name</th>
-                <th class="services-table-th"></th>
             </tr>
             <tr th:each="service : ${services}">
                 <td class="service-table-td" th:text="${service.serviceId}"/>
                 <td class="service-table-td" th:text="${service.serviceType}"/>
-                <td class="service-table-td">
+                <td class="service-table-td" style="padding: 1px">
                     <form method="post" th:action="@{/admin/services/delete(serviceId=${service.serviceId})}"
                           id="deleteService">
-                        <input type="submit" id="delete" name="delete" value="Delete"/>
+                        <input class="deletebtn" type="submit" id="delete" name="delete" value="Delete"/>
                     </form>
                 </td>
             </tr>
         </table>
+        <span class="error" th:if="${error != null}" th:text="${error}"></span><br/>
     </div>
     <div th:insert="~{template.html :: headerScriptFragment}"></div>
 </div>

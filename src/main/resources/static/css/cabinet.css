@@ -56,3 +56,47 @@ tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
+.unsubbtn {
+    width: 100%;
+    height: 100%;
+    background-color: indianred;
+    color: white;
+    padding: 15px 18px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.unsubbtn:hover {
+    opacity: 1;
+}
+
+.previous {
+    background-color: #f1f1f1;
+    color: black;
+    display: inline-block;
+}
+
+.next {
+    background-color: #4CAF50;
+    color: white;
+    display: inline-block;
+}
+
+.next a, .previous a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+}
+
+.next a:visited, .previous a:visited{
+    color: inherit;
+}
+
+.next a:hover, .previous a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+

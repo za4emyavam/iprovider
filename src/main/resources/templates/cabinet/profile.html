@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Cabinet</title>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
@@ -47,10 +46,10 @@
                     </td>
                     <td class="tariff-table-td" th:text="${#dates.format(tariff.dateOfStart, 'dd-MM-yyyy')}"/>
                     <td class="tariff-table-td" th:text="${tariff.dateOfLastPayment}"/>
-                    <td class="tariff-table-td">
+                    <td class="tariff-table-td" style="padding: 1px">
                         <form action="#" th:action="@{/cabinet/profile(tariffId=${tariff.userTariffsId})}"
                               id="unsubscribeTariffForm" method="post">
-                            <input type="submit" value="Unsubscribe tariff"/>
+                            <input class="unsubbtn" type="submit" value="Unsubscribe tariff"/>
                         </form>
                     </td>
                 </tr>

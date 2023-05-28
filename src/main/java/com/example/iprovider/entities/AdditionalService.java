@@ -27,7 +27,7 @@ public class AdditionalService implements Serializable {
     @Size(min=5, message = "Description must contain at least 10 characters")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Cost can't me empty")
     @Positive(message = "Value must be positive")
     private Double cost;
 

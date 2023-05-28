@@ -1,7 +1,6 @@
 <!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <title>Fastest</title>
@@ -14,9 +13,41 @@
     <div class="home-sidebar" th:insert="~{template.html :: homeSideBar}"></div>
     <div class="home-content">
         <h1 class="page-name" th:text="#{main.title}">Main_page</h1>
-        <p th:text="#{main.phrase}"></p>
         <div class="main-menu">
-            <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
+            <div class="menu-columns-img">
+                <img class="index-img" th:src="@{img/index_img.png}">
+            </div>
+            <div class="menu-columns">
+                <h3>
+                    About us
+                </h3>
+                <p>
+                    The Fastest company began its history in 2006. Our first step is to provide access services to global
+                    network using Ethernet technology in only one district of the city of Odesa, Malinovsky.
+                </p>
+                <p>
+                    Already after 2 years, we were able to offer our customers high-speed Internet with a continuous connection by
+                    building an optical highway. We began to expand the boundaries and covered other areas of the city, connecting our
+                    subscribers using FTTH technology.
+                </p>
+                <p>
+                    Another 2 years later, we installed and put into operation our own server technical site. We have new opportunities,
+                    and we have updated the equipment, choosing the products of the well-known American brand, Juniper Networks.
+                </p>
+                <p>
+                    It was then that xPON technology, an optical network, appeared for the first time in Odesa, which allowed us to
+                    provide our subscribers with high-quality Internet at even higher speeds. In 2015, we updated the equipment again,
+                    this time choosing the largest brand in the telecommunications market, Huawei Technologies.
+                </p>
+                <p>
+                    In our work, we use only certified equipment and components from world brands.
+                </p>
+                <p>
+                    This gives us the opportunity to provide our customers with round-the-clock access to the Internet at high speeds.
+                    And we do not stop there and continue to develop.
+                </p>
+            </div>
+            <!--<form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
                 <input type="submit" value="Logout"/>
             </form>
             <form sec:authorize="!isAuthenticated()" method="get" th:action="@{/login}">
@@ -24,7 +55,7 @@
             </form>
             <a th:href="@{/tariffs}">
                 <button>Tariffs</button>
-            </a>
+            </a>-->
         </div>
     </div>
 </div>

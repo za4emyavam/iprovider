@@ -1,6 +1,8 @@
 package com.example.iprovider.data;
 
 import com.example.iprovider.entities.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Interface for working with transactions.
@@ -23,6 +25,7 @@ public interface TransactionRepository {
      * @return an Iterable containing the requested transactions, or an empty Iterable if no transactions were found
      */
     Iterable<Transaction> readAllByUserBalanceId(long balanceId, int page, int size);
+    Page<Transaction> readAllByUserBalanceId(long balanceId, Pageable page);
 
     /**
      * Get the total number of transactions for a user balance.

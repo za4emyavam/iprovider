@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +31,7 @@ public class AdminAddServiceController {
 
     @RequestMapping(value = "/admin/add_services/create", method = RequestMethod.GET)
     public String getCreateServicePage(Model model) {
-        model.addAttribute("addService", new AdditionalService());
+        model.addAttribute("additionalService", new AdditionalService());
         return "admin/add_services/create";
     }
 
@@ -52,31 +52,55 @@ public class AdminAddServiceController {
     }
 
     @RequestMapping(value = "/admin/add_services/create", method = RequestMethod.POST)
-    public String processCreateAdditionalService(@ModelAttribute @Valid AdditionalService additionalService, Errors errors, Model model) {
-        if (errors.hasErrors()) {
-            log.error("Validation error: {}", errors);
+    public String processCreateAdditionalService(@ModelAttribute("additionalService") @Valid AdditionalService additionalService,
+                                                 BindingResult bindingResult,
+                                                 Model model) {
+        for (AdditionalService service : additionalServiceRepository.readAll()) {
+            if (service.getName().equals(additionalService.getName())) {
+                model.addAttribute("addService", additionalService);
+                model.addAttribute("nameError",
+                        "Additional service with this name already exists");
+                return "admin/add_services/create";
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
+            log.error("Validation error: {}", bindingResult);
             model.addAttribute("addService", new AdditionalService());
             return "admin/add_services/create";
         }
+
         additionalService.setStatus(AdditionalService.Status.ACTIVE);
         additionalServiceRepository.create(additionalService);
         return "redirect:/admin/add_services";
     }
 
     @RequestMapping(value = "/admin/add_services/update", method = RequestMethod.POST)
-    public String processUpdateAdditionalService(@ModelAttribute("additionalService")
-                                                 @Valid AdditionalService additionalService,
-                                                 @RequestParam long additionalServiceId, Errors errors, Model model) {
-        if (errors.hasErrors()) {
-            Optional<AdditionalService> currentAddService = additionalServiceRepository
-                    .read(additionalService.getAdditionalServiceId());
-            if (currentAddService.isEmpty())
-                return "redirect:/admin/add_services";
+    public String processUpdateAdditionalService(
+            @ModelAttribute("additionalService") @Valid AdditionalService additionalService,
+            BindingResult bindingResult, @RequestParam long additionalServiceId, Model model) {
+        Optional<AdditionalService> currentAddService = additionalServiceRepository
+                .read(additionalService.getAdditionalServiceId());
+        if (currentAddService.isEmpty())
+            return "redirect:/admin/add_services";
+
+        for (AdditionalService service : additionalServiceRepository.readAll()) {
+            if (service.getName().equals(additionalService.getName()) && service.getAdditionalServiceId() != additionalServiceId) {
+                model.addAttribute("currentAddService", currentAddService.get());
+                model.addAttribute("additionalService", additionalService);
+                model.addAttribute("nameError",
+                        "Additional service with this name already exists");
+                return "admin/add_services/update";
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
             model.addAttribute("currentAddService", currentAddService.get());
-            model.addAttribute("additionalService", new AdditionalService());
-            log.error("Validation error: {}", errors);
+            model.addAttribute("additionalService", additionalService);
+            log.error("Validation error: {}", bindingResult);
             return "admin/add_services/update";
         }
+
         additionalService.setAdditionalServiceId(additionalServiceId);
         additionalServiceRepository.update(additionalService);
         return "redirect:/admin/add_services";

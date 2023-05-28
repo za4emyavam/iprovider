@@ -7,6 +7,8 @@ import com.example.iprovider.entities.forms.ConnectionRequestForm;
 import com.example.iprovider.entities.forms.UserDetailsForm;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -105,19 +107,18 @@ public class CabinetController {
 
     @RequestMapping(value = "/cabinet/history", method = RequestMethod.GET)
     public String getHistory(Model model, Authentication authentication,
-                             @RequestParam(defaultValue = "1") int page,
-                             @RequestParam(defaultValue = "5") int size) {
-        User userDetails = (User) authentication.getPrincipal();
-        model.addAttribute("transactions", transactionRepository.readAllByUserBalanceId(userDetails.getUserId(), page, size));
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "10") int size) {
 
-        int number = transactionRepository.getAmountByUserBalanceId(userDetails.getUserId());
-        int maxPage = (int) Math.ceil(number * 1.0 / size);
-        if (page <= 0 || page > maxPage) {
-            page = 1;
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("maxPage", maxPage);
+        User userDetails = (User) authentication.getPrincipal();
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Transaction> pagedTransactions = transactionRepository.readAllByUserBalanceId(userDetails.getUserId(), pageRequest);
+
+        model.addAttribute("pageable", pagedTransactions);
+        model.addAttribute("transactions", pagedTransactions.getContent());
+        model.addAttribute("max", pagedTransactions.getTotalPages() - 1);
+
         return "cabinet/history";
     }
 

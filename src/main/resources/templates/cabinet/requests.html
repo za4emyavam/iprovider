@@ -4,6 +4,7 @@
     <title>Cabinet</title>
     <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/cabinet/requests.css}"/>
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
@@ -26,8 +27,11 @@
                 <td class="request-table-td" th:text="${request.address}"/>
                 <td class="request-table-td" th:text="${#dates.format(request.dateOfChange, 'dd-MM-yyyy')}"/>
                 <td class="request-table-td" th:text="${request.status}"/>
-                <td th:if="${request.status.name() != 'REJECTED'}" class="request-table-td">
-                    <a th:href="@{/cabinet/requests/request_info(requestId=${request.connectionRequestId})}">See more</a>
+                <td th:if="${request.status.name() != 'REJECTED'}" class="request-table-td td-btn">
+                    <a class="infobtn"
+                       th:href="@{/cabinet/requests/request_info(requestId=${request.connectionRequestId})}">
+                        See more
+                    </a>
                 </td>
             </tr>
         </table>

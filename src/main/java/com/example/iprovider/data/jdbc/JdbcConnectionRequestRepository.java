@@ -3,6 +3,9 @@ package com.example.iprovider.data.jdbc;
 import com.example.iprovider.data.ConnectionRequestRepository;
 import com.example.iprovider.data.TariffRepository;
 import com.example.iprovider.entities.ConnectionRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
@@ -39,11 +42,19 @@ public class JdbcConnectionRequestRepository implements ConnectionRequestReposit
     }
 
     @Override
+    public Page<ConnectionRequest> readAll(PageRequest pageRequest) {
+        List<ConnectionRequest> connectionRequests = jdbcTemplate.query(
+                "select * from connection_request " +
+                        "order by connection_request_id DESC limit ? offset ?", this::mapRowToConnectionRequest,
+                pageRequest.getPageSize(),
+                pageRequest.getOffset());
+        return new PageImpl<>(connectionRequests, pageRequest, getAmount());
+    }
+
+    @Override
     public Iterable<ConnectionRequest> readAll(int page, int size) {
         int offset = (page - 1) * size;
         return jdbcTemplate.query(
-                /*"select cr.* from connection_request cr, tariff t " +
-                "where cr.tariff=t.tariff_id limit ? offset ?"*/
                 "select * from connection_request " +
                         " limit ? offset ?", this::mapRowToConnectionRequest,
                 size, offset);

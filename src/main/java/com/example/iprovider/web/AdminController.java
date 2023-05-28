@@ -1,7 +1,10 @@
 package com.example.iprovider.web;
 
 import com.example.iprovider.data.ChecksRepository;
+import com.example.iprovider.entities.Checks;
 import com.example.iprovider.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,16 +28,13 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/check_payments", method = RequestMethod.GET)
     public String getChecksPage(Model model,
-                                @RequestParam(defaultValue = "1") int page,
+                                @RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "5") int size) {
-        int amount = checksRepository.getAmount();
-        int maxPage = (int) Math.ceil(amount * 1.0 / size);
-        if (page < 1 || page > maxPage)
-            page = 1;
-        model.addAttribute("maxPage", maxPage);
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("checks", checksRepository.readAll(page, size));
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Checks> pagedChecks = checksRepository.readAll(pageRequest);
+
+        model.addAttribute("pageable", pagedChecks);
+        model.addAttribute("checks", pagedChecks.getContent());
         return "admin/check_payments";
     }
 

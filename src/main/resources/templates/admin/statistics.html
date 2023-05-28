@@ -11,7 +11,7 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
-        <h1>Statistics</h1>
+        <h1 class="page-name">Statistics</h1>
         <p>Most popular tariff is
             <span style="font-weight:bold" th:text="${firstInRating.key.name}"/> has
             <span style="font-weight:bold" th:text="${firstInRating.value}"/> current subscribers.
@@ -24,7 +24,7 @@
         <div th:if="${lastCheck.isPresent()}">
           <p>The last check took money from <span style="font-weight: bold" th:text="${lastCheck.get().users}"/>
               subscribers on amount of <span style="font-weight: bold" th:text="${lastCheck.get().amount}"/>.
-              <a th:href="@{/admin/statistics/cheks}">Click to see more detailed.</a></p>
+              <a th:href="@{/admin/check_payments}">Click to see more detailed.</a></p>
         </div>
         <p>
             There are currently <span style="font-weight: bold" th:text="${amountOfUsers}"></span> registered users.

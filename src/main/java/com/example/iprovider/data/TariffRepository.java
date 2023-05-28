@@ -26,6 +26,7 @@ public interface TariffRepository {
      */
     Iterable<Tariff> readAll(int page, int size);
     Page<Tariff> readAll(Pageable page);
+    Page<Tariff> readAllWithActiveStatus(Pageable page);
 
     /**
      * Get the total number of tariffs.

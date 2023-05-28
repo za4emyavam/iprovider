@@ -29,15 +29,15 @@ public class Tariff implements Serializable {
     @Size(min=5, message = "Description must contain at least 10 characters")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Cost can't be empty")
     @Positive(message = "Value must be positive")
     private Double cost;
 
-    @NotNull
+    @NotNull(message = "Frequency can't be empty")
     @Positive(message = "Value must be positive")
     private Integer frequencyOfPayment;
 
-    @NotNull
+    @NotNull(message = "Status can't be null")
     private Status status;
 
     @Size(min=1, message = "You must choose at least 1 service")
@@ -66,6 +66,4 @@ public class Tariff implements Serializable {
             results.add(service.getServiceId());
         return results;
     }
-
-
 }

@@ -4,65 +4,66 @@
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin/tariffs/create.css}"/>
 </head>
 <body>
 <header class="cabinet-header" th:insert="~{template.html :: headerFragment}"></header>
 <div class="admin-container">
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
     <div class="admin-content" th:fragment="adminContent">
+        <h1 class="page-name">Create tariff</h1>
         <form action="#" th:object="${tariff}" th:action="@{/admin/tariffs/create}" method="post">
-            <!--id="creatingTariffForm"-->
-            <label for="name">Name:</label>
-            <input type="text" th:field="*{name}" name="name" id="name"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
-                Name validation error
-            </span><br/>
 
-            <label for="description">Description:</label>
-            <input type="text" th:field="*{description}" name="description" id="description"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
-                Description validation error
-            </span><br/>
+            <label for="name"><b>Name</b></label><br/>
+            <input type="text" th:field="*{name}" name="name" id="name"
+                   placeholder="Name"/>
+            <span class="validationError" th:errors="*{name}"></span>
+            <span class="error" th:if="${nameError != null}" th:text="${nameError}"></span><br/>
 
-            <label for="cost">Cost:</label>
-            <input type="number" th:field="*{cost}" name="cost" id="cost"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}">
-                Cost validation error
-            </span><br/>
+            <label for="description"><b>Description</b></label><br/>
+            <input type="text" th:field="*{description}" name="description" id="description"
+                   placeholder="Description"/>
+            <span class="validationError" th:errors="*{description}"></span><br/>
 
-            <label for="frequencyOfPayment">Frequency of payment: </label>
-            <input type="number" th:field="*{frequencyOfPayment}" name="frequencyOfPayment" id="frequencyOfPayment"/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('frequencyOfPayment')}" th:errors="*{frequencyOfPayment}">
-                Frequency of payment validation error
-            </span><br/>
+            <label for="cost"><b>Cost</b></label><br/>
+            <input type="number" th:field="*{cost}" name="cost" id="cost"
+                   placeholder="Cost"/>
+            <span class="validationError" th:errors="*{cost}"></span><br/>
 
-            <label>Status:</label><br/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
-                Status validation error
-            </span><br/>
-            <input type="radio" th:field="*{status}" name="status" id="statusDisabled" value="DISABLED"
-                   th:text="Disabled"/><br/>
-            <input type="radio" th:field="*{status}" name="status" id="statusActive" value="ACTIVE"
-                   th:text="Active"/><br/>
+            <label for="frequencyOfPayment"><b>Frequency of payment</b></label><br/>
+            <input type="number" th:field="*{frequencyOfPayment}" name="frequencyOfPayment" id="frequencyOfPayment"
+                   placeholder="Frequency in days"/>
+            <span class="validationError" th:errors="*{frequencyOfPayment}"></span><br/>
 
-
-            <label>Service(s):</label><br/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('services')}" th:errors="*{services}">
-                Services validation error
-            </span><br/>
-            <div class="checkboxes-services" th:each="service : ${services}">
-                <input th:field="*{services}" type="checkbox" th:value="${service.serviceId}">
-                <span th:text="${service.serviceType.toLowerCase()}">SERVICE</span><br/>
+            <label><b>Status</b></label><br/>
+            <span class="validationError" th:errors="*{status}"></span>
+            <div class="radio-statuses">
+                <label class="radio-container">
+                    <label class="radio-text">Disabled</label>
+                    <input type="radio" th:field="*{status}" name="radio" value="DISABLED"
+                           id="statusDisabled" checked="checked"><br/>
+                    <span class="radio"></span>
+                </label>
+                <label class="radio-container">
+                    <label class="radio-text">Active</label>
+                    <input type="radio" th:field="*{status}" name="radio" value="ACTIVE"
+                           id="statusActive"><br/>
+                    <span class="radio"></span>
+                </label>
             </div>
 
+            <label><b>Service(s)</b></label>
+            <span class="validationError" th:errors="*{services}"></span>
+            <div class="checkboxes-services" th:each="service : ${services}">
+                <label class="check-container">
+                    <label class="check-text" th:text="${service.serviceType.toLowerCase()}"></label>
+                    <input th:field="*{services}" type="checkbox"
+                           th:value="${service.serviceId}">
+                    <span class="checkmark"></span><br/>
+                </label>
+            </div>
 
-            <input type="submit" value="Add tariff"/>
+            <input class="submitbtn" type="submit" value="Add tariff"/>
         </form>
     </div>
 </div>

@@ -45,6 +45,18 @@ public class JdbcTariffRepository implements TariffRepository {
 
     @Override
     public Page<Tariff> readAll(Pageable page) {
+
+        List<Tariff> tariffs = jdbcTemplate.query("select * from tariff order by tariff_id limit ? offset ?",
+                this::mapToRowTariff,
+                page.getPageSize(),
+                page.getOffset()
+        );
+
+        return new PageImpl<>(tariffs, page, count());
+    }
+
+    @Override
+    public Page<Tariff> readAllWithActiveStatus(Pageable page) {
         Sort.Order order = !page.getSort().isEmpty() ?
                 page.getSort().toList().get(0) :
                 Sort.Order.by("tariff_id");
@@ -56,13 +68,19 @@ public class JdbcTariffRepository implements TariffRepository {
                 page.getOffset()
         );
 
-        return new PageImpl<>(tariffs, page, count());
+        return new PageImpl<>(tariffs, page, countActive());
     }
 
     @Override
     public Integer count() {
         return jdbcTemplate.query("select count(tariff_id) from tariff",
                 (rs, rowNum) -> rs.getInt(1))
+                .get(0);
+    }
+
+    private Integer countActive() {
+        return jdbcTemplate.query("select count(tariff_id) from tariff where status='active'",
+                        (rs, rowNum) -> rs.getInt(1))
                 .get(0);
     }
 

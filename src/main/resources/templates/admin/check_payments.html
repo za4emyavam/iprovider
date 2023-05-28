@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Admin Panel</title>
-    <link rel="stylesheet" th:href="@{/css/admin/tariffs.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
     <link rel="stylesheet" th:href="@{/css/shared.css}"/>
 </head>
 <body>
@@ -12,9 +11,9 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
-        <h1>Checks of payments</h1>
+        <h1 class="page-name">Checks of payments</h1>
         <form action="#" th:action="@{/admin/check_payments}" method="post" id="checkPaymentsForm">
-            <input type="submit" value="Check payment">
+            <input class="submitbtn" type="submit" value="Check payment" style="width: 200px">
         </form>
         <table class="tariffs-table">
             <tr>
@@ -32,12 +31,16 @@
                 <td class="tariff-table-td" th:text="${#dates.format(check.dateOfCheck, 'dd-MM-yyyy')}"/>
             </tr>
         </table>
-        <!--TODO-->
-        <div th:if="${page != 1}">
-            <a th:href="@{/admin/check_payments(page=${page-1},size=${size})}">Previous</a>
+        <br/>
+        <div class="previous" th:if="${pageable.hasPrevious()}">
+            <a th:href="@{/admin/check_payments(page=${pageable.previousPageable().getPageNumber()})}">
+                &laquo; Previous
+            </a>
         </div>
-        <div th:if="${page != maxPage}">
-            <a th:href="@{/admin/check_payments(page=${page+1},size=${size})}">Next</a>
+        <div class="next" th:if="${pageable.hasNext()}">
+            <a th:href="@{/admin/check_payments(page=${pageable.nextPageable().getPageNumber()})}">
+                Next &raquo;
+            </a>
         </div>
     </div>
 </div>

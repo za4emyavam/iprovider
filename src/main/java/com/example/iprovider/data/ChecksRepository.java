@@ -1,6 +1,8 @@
 package com.example.iprovider.data;
 
 import com.example.iprovider.entities.Checks;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
 
@@ -16,6 +18,7 @@ public interface ChecksRepository {
      * @return an Iterable containing the checks on the specified page, or an empty Iterable if no checks were found
      */
     Iterable<Checks> readAll(int page, int size);
+    Page<Checks> readAll(PageRequest pageRequest);
 
     /**
      * Get the total number of checks.

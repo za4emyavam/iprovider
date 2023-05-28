@@ -46,7 +46,6 @@ public class TariffsController {
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "6") int size,
                                @RequestParam(defaultValue = "") String sort) {
-        //TODO Sort или убрать или добавить
         String[] sortParams = sort.split(": ");
         Sort s = sortParams.length == 0 || sortParams[0].isEmpty() ?
                 Sort.unsorted()
@@ -55,7 +54,7 @@ public class TariffsController {
 
         PageRequest pageRequest = PageRequest.of(page, size, s);
 
-        Page<Tariff> pagedTariffs = tariffRepository.readAll(pageRequest);
+        Page<Tariff> pagedTariffs = tariffRepository.readAllWithActiveStatus(pageRequest);
 
         model.addAttribute("pageable", pagedTariffs);
         model.addAttribute("tariffs", pagedTariffs.getContent());

@@ -11,12 +11,16 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
-        <h1>Rating</h1>
+        <h1 class="page-name">Tariff rating</h1>
         <table>
-          <tr th:each="instance : ${rating}">
-            <td th:text="${instance.key.name}">keyvalue</td>
-            <td th:text="${instance.value}">num</td>
-          </tr>
+            <tr>
+                <th>Tariff</th>
+                <th>Amount of users</th>
+            </tr>
+            <tr th:each="instance : ${rating}">
+                <td th:text="${instance.key.name}">keyvalue</td>
+                <td th:text="${instance.value}">num</td>
+            </tr>
         </table>
     </div>
 </div>

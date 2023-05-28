@@ -22,56 +22,20 @@
                         <p th:text="${service.serviceType}"></p>
                     </div>
                 </li>
-                <li class="grey"><a th:href="@{/tariffs/request(tariffId=${tariff.tariffId})}" class="button">Request</a></li>
+                <li class="grey"><a th:href="@{/tariffs/request(tariffId=${tariff.tariffId})}"
+                                    class="button">Request</a></li>
             </ul>
         </div>
-        <!--<table class="tariffs-table">
-            <tr>
-                <th class="tariff-table-th">
-                    <a th:href="@{/tariffs(page=${pageable.getNumber()},
-                    sort=${pageable.getSort().toString() == ('tariff_id: ASC') ? 'tariff_id: DESC' : 'tariff_id: ASC'})}">
-                        Id
-                    </a>
-                </th>
-                <th class="tariff-table-th">
-                    <a th:href="@{/tariffs(page=${pageable.getNumber()},
-                    sort=${pageable.getSort().toString() == ('name: ASC') ? 'name: DESC' : 'name: ASC'})}">
-                        Name
-                    </a>
-                <th class="tariff-table-th">Description</th>
-                <th class="tariff-table-th">
-                    <a th:href="@{/tariffs(page=${pageable.getNumber()},
-                    sort=${pageable.getSort().toString() == ('cost: ASC') ? 'cost: DESC' : 'cost: ASC'})}">
-                        Cost
-                    </a>
-                </th>
-                <th class="tariff-table-th">Frequency of payment</th>
-                <th class="tariff-table-th">Service</th>
-            </tr>
-            <tr th:each="tariff : ${tariffs}">
-                <td class="tariff-table-td" th:text="${tariff.tariffId}"/>
-                <td class="tariff-table-td" th:text="${tariff.name}"/>
-                <td class="tariff-table-td" th:text="${tariff.description}"/>
-                <td class="tariff-table-td" th:text="${tariff.cost}"/>
-                <td class="tariff-table-td" th:text="${tariff.frequencyOfPayment}"/>
-                <td class="tariff-table-td">
-                    <div th:each="service : ${tariff.getServices()}">
-                        <p th:text="${service.serviceType}"></p>
-                    </div>
-                </td>
-                <td>
-                    <a th:href="@{/tariffs/request(tariffId=${tariff.tariffId})}">request</a>
-                </td>
-            </tr>
-        </table>-->
 
         <br/>
         <!--TODO-->
         <div class="previous" th:if="${pageable.hasPrevious()}">
-            <a th:href="@{/tariffs(page=${pageable.previousPageable().getPageNumber()}, sort=${pageable.getSort()})}">&laquo; Previous</a>
+            <a th:href="@{/tariffs(page=${pageable.previousPageable().getPageNumber()}, sort=${pageable.getSort()})}">&laquo;
+                Previous</a>
         </div>
         <div class="next" th:if="${pageable.hasNext()}">
-            <a th:href="@{/tariffs(page=${pageable.nextPageable().getPageNumber()}, sort=${pageable.getSort()})}">Next &raquo;</a>
+            <a th:href="@{/tariffs(page=${pageable.nextPageable().getPageNumber()}, sort=${pageable.getSort()})}">Next
+                &raquo;</a>
         </div>
     </div>
 </div>

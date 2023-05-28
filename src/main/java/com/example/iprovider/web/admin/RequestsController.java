@@ -1,7 +1,10 @@
 package com.example.iprovider.web.admin;
 
 import com.example.iprovider.data.ConnectionRequestRepository;
+import com.example.iprovider.entities.ConnectionRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,17 +24,15 @@ public class RequestsController {
     }
 
     @ModelAttribute
-    public void addRequestToModel(Model model, @RequestParam(defaultValue = "1") int page,
+    public void addRequestToModel(Model model,
+                                  @RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "5") int size) {
-        int number = connectionRequestRepository.getAmount();
-        int maxPage = (int)Math.ceil(number * 1.0 / size);
-        if (page <= 0 || page > maxPage) {
-            page = 1;
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("maxPage", maxPage);
-        model.addAttribute("requests", connectionRequestRepository.readAll(page, size));
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<ConnectionRequest> pagedConnectionRequest = connectionRequestRepository.readAll(pageRequest);
+
+        model.addAttribute("pageable", pagedConnectionRequest);
+        model.addAttribute("requests", pagedConnectionRequest.getContent());
+        model.addAttribute("max", pagedConnectionRequest.getTotalPages() - 1);
     }
 
     @GetMapping

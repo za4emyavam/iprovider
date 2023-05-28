@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
@@ -12,14 +11,10 @@
     <div class="admin-sidebar" th:insert="~{admin.html :: adminSideBar}"></div>
 
     <div class="admin-content" th:fragment="adminContent">
+        <h1 class="page-name">Additional services page</h1>
         <form method="get" th:action="@{/admin/add_services/create}" id="createAddService">
-            <input type="submit" id="create" name="create" value="Create new additional service"/>
+            <input class="submitbtn" type="submit" id="create" name="create" value="Create new additional service" style="width: 250px"/>
         </form>
-        <div class="alert-msg" th:if="${error}">
-            <br/>
-            Tariffs are connected to the service. First remove the connected tariffs, then the service.
-            <br/>
-        </div>
         <table class="services-table">
             <tr>
                 <th class="services-table-th">Id</th>
@@ -34,16 +29,12 @@
                 <td class="service-table-td" th:text="${service.description}"/>
                 <td class="service-table-td" th:text="${service.cost}"/>
                 <td class="service-table-td" th:text="${service.status.name()}"/>
-                <td class="service-table-td">
-                    <!--<form method="get" th:action="@{/admin/add_services/update(addServiceId=${service.additionalServiceId})}"
-                          id="updateService">
-                        <input type="submit" id="update" name="update" value="Update"/>
-                    </form>-->
-                    <a th:href="@{/admin/add_services/update(addServiceId=${service.additionalServiceId})}">Update</a>
+                <td class="service-table-td" style="padding: 1px">
+                    <a class="infobtn" style="text-align: center" th:href="@{/admin/add_services/update(addServiceId=${service.additionalServiceId})}">Update</a>
                     <br/>
                     <form method="post" th:action="@{/admin/add_services/delete(addServiceId=${service.additionalServiceId})}"
                           id="deleteService">
-                        <input type="submit" id="delete" name="delete" value="Delete"/>
+                        <input class="unsubbtn" type="submit" id="delete" name="delete" value="Delete"/>
                     </form>
                 </td>
             </tr>

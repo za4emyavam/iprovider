@@ -2,6 +2,9 @@ package com.example.iprovider.data.jdbc;
 
 import com.example.iprovider.data.TransactionRepository;
 import com.example.iprovider.entities.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
@@ -12,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
+import java.util.List;
 
 @Repository
 public class JdbcTransactionRepository implements TransactionRepository {
@@ -61,6 +65,19 @@ public class JdbcTransactionRepository implements TransactionRepository {
                         "limit ? offset ?",
                 this::mapRowToTransaction, balanceId, size, offset
         );
+    }
+
+    @Override
+    public Page<Transaction> readAllByUserBalanceId(long balanceId, Pageable page) {
+        List<Transaction> transactionList = jdbcTemplate.query(
+                "select * from transaction where balance_id=? order by transaction_date desc " +
+                        "limit ? offset ?",
+                this::mapRowToTransaction,
+                balanceId,
+                page.getPageSize(),
+                page.getOffset()
+        );
+        return new PageImpl<>(transactionList, page, getAmountByUserBalanceId(balanceId));
     }
 
     @Override

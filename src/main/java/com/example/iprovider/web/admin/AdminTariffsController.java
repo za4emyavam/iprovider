@@ -2,6 +2,8 @@ package com.example.iprovider.web.admin;
 
 import com.example.iprovider.data.TariffRepository;
 import com.example.iprovider.entities.Tariff;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,17 +21,13 @@ public class AdminTariffsController {
 
     @ModelAttribute
     public void addTariffsToModel(Model model,
-                                  @RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "5") int size) {
-        int number = tariffRepository.count();
-        int maxPage = (int)Math.ceil(number * 1.0 / size);
-        if (page <= 0 || page > maxPage) {
-            page = 1;
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
-        model.addAttribute("maxPage", maxPage);
-        model.addAttribute("tariffs", tariffRepository.readAll(page, size));
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Tariff> pagedTariffs = tariffRepository.readAll(pageRequest);
+
+        model.addAttribute("pageable", pagedTariffs);
+        model.addAttribute("tariffs", pagedTariffs.getContent());
     }
 
     @ModelAttribute(name = "tariff")
